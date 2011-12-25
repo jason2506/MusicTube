@@ -1,0 +1,23 @@
+{
+    "name": "MusicTube",
+    "version": "0.1.0",
+    "description": "Playing YouTube music in your web browser.",
+    "icons": {
+        "128": "icons/icon_128.png",
+         "48": "icons/icon_48.png",
+         "16": "icons/icon_16.png"
+    },
+    "background_page": "background.html",
+    "browser_action": {
+        "default_icon": "icons/icon_48.png",
+        "default_popup": "popup.html"
+    },
+    "content_scripts": [{
+        "matches": ["http://www.youtube.com/watch*"],
+        "js": ["scripts/jquery.js", "scripts/contentscript.js"]
+    }],
+    "permissions": [
+        "http://www.youtube.com/watch"
+    ]
+}
+

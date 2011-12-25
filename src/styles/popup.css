@@ -1,0 +1,117 @@
+body {
+  font-size: 14px;
+  padding: 5px;
+  width: 260px;
+}
+
+::-webkit-scrollbar {
+  position: absolute;
+	width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  height: 50px;
+  background: #999;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
+::-webkit-scrollbar-track-piece {
+	background: #CCC;
+}
+
+#toggle, #mute {
+  cursor: pointer;
+}
+
+#progress {
+  background: #CCC;
+  border: 1px solid #999;
+  height: 5px;
+  width: 258px;
+}
+
+#control {
+  padding: 10px 0;
+  vertical-align: top;
+}
+
+#time {
+  font-size: 13px;
+  padding: 0 7px;
+  position: relative;
+  top: -3px;
+}
+
+#volume {
+  position: relative;
+  top: -1px;
+  float: right;
+}
+
+#volume-range {
+  width: 60px;
+}
+
+#playlist {
+  margin: 0;
+  max-height: 300px;
+  overflow-x: hidden;
+  padding: 0;
+  width: 260px;
+}
+
+#playlist span {
+  display: inline-block;
+}
+
+#playlist li {
+  border: 1px solid #CCC;
+  border-top: none;
+  list-style: none;
+  padding: 6px 5px;
+  white-space: nowrap;
+}
+
+#playlist li:first-child {
+  border-top: 1px solid #CCC;
+}
+
+#playlist li:before {
+  content: attr(index);
+  display: inline-block;
+  font-weight: bold;
+  text-align: right;
+  padding-right: 8px;
+  width: 25px;
+}
+
+#playlist li:hover {
+  background: #DDD;
+}
+
+#playlist li.current:before {
+  content: '>';
+}
+
+#playlist li:hover .title {
+  display: inline-block;
+  max-width: 190px;
+  overflow: hidden;
+}
+
+#playlist li:hover .remove {
+  cursor: pointer;
+  display: inline-block;
+  float: right;
+  margin-right: 2px;
+  margin-top: -1px;
+}
+
+#playlist .remove {
+  display: none;
+}
+
