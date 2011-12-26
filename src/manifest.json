@@ -1,6 +1,6 @@
 {
     "name": "MusicTube",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Playing YouTube music in your web browser.",
     "icons": {
         "128": "icons/icon_128.png",
@@ -16,6 +16,7 @@
         "matches": ["http://www.youtube.com/watch*"],
         "js": ["scripts/jquery.js", "scripts/contentscript.js"]
     }],
+    "options_page": "options.html",
     "permissions": [
         "http://www.youtube.com/watch"
     ]
