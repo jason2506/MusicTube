@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="styles/options.css" />
+    <title>MusicTube Options</title>
+  </head>
+  <body>
+    <div id="sidebar-container">
+      <h1>MusicTube Options</h1>
+      <ul id="sidebar">
+        <li rel="import-export-page">Import/Export</li>
+      </ul>
+    </div>
+    <div id="main">
+      <div id="import-export-page" class="page">
+        <h2>Import/Export</h2>
+        <div class="content">
+          <div class="msg"></div>
+          <div id="import-container">
+            <label for="import">Import:</label>
+            <textarea id="import"></textarea>
+            <input type="button" id="submit-import" value="Submit" />
+          </div>
+          <div id="export-container">
+            <label for="export">Export:</label>
+            <textarea id="export" readonly="true"></textarea>
+            <input type="button" id="refresh-export" value="Refresh" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="scripts/jquery.js"></script>
+    <script src="scripts/options.js"></script>
+  </body>
+</html>
