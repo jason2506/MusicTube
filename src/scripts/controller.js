@@ -19,6 +19,23 @@
         for (var index = 0; index < playlist.length; index++) {
             appendPlaylistItem(index + 1, playlist[index].title);
         }
+
+        components.playlist.sortable({
+            stop: function(event, ui) {
+                var from = $(ui.item).attr('index') - 1;
+                var to = $(ui.item).index();
+                var step = from > to ? -1 : 1;
+
+                var items = components.playlist.children();
+                for (var index = from; index != to; index += step) {
+                    $(items[index]).attr('index', index + 1);
+                }
+
+                $(ui.item).attr('index', to + 1);
+                player.move(from, to);
+            }
+        });
+        components.playlist.disableSelection();
     }
 
     function appendPlaylistItem(index, title) {
@@ -147,10 +164,10 @@
 
     function updatePlaylist() {
         var items = components.playlist.children();
-        var currentIndex = player.currentIndex();
+        var currentIndex = player.currentIndex() + 1;
         for (var index = 0; index < items.length; index++)
         {
-            if (index == currentIndex)
+            if ($(items[index]).attr('index') == currentIndex)
                 $(items[index]).addClass('current');
             else
                 $(items[index]).removeClass('current');
