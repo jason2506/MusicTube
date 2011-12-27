@@ -32,6 +32,7 @@
                 }
 
                 $(ui.item).attr('index', to + 1);
+                player.move(from, to);
             }
         });
         components.playlist.disableSelection();

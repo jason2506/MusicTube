@@ -114,6 +114,19 @@ var player = new (function(player) {
             currentPlaying--;
     }
 
+    this.move = function(from, to) {
+        if (from == currentPlaying)
+            currentPlaying = to;
+        else if (from < currentPlaying && currentPlaying <= to)
+            currentPlaying--;
+        else if (to <= currentPlaying && currentPlaying < from)
+            currentPlaying++;
+
+        var target = this.playlist[from];
+        this.playlist.splice(from, 1);
+        this.playlist.splice(to, 0, target);
+    }
+
     this.currentIndex = function() {
         return currentPlayingRemoved ? -1 : currentPlaying;
     }

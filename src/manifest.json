@@ -1,6 +1,6 @@
 {
     "name": "MusicTube",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "description": "Playing YouTube music in your web browser.",
     "icons": {
         "128": "icons/icon_128.png",
