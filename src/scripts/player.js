@@ -21,12 +21,6 @@ var player = new (function(player) {
         }
     });
 
-    // Stores playlist to localStorage when close this page
-    $(window).unload(this, function(event) {
-        var that = event.data;
-        localStorage.playlist = JSON.stringify(that.playlist);
-    });
-
     this.play = function(index) {
         if (index == undefined) {
             if (player.attr('src').length > 0)
@@ -105,10 +99,13 @@ var player = new (function(player) {
 
     this.add = function(id, title) {
         this.playlist.push({id: id, title: title});
+        localStorage.playlist = JSON.stringify(this.playlist);
     }
 
     this.remove = function(index) {
         this.playlist.splice(index, 1);
+        localStorage.playlist = JSON.stringify(this.playlist);
+
         currentPlayingRemoved = index == currentPlaying;
         if (currentPlaying >= index)
             currentPlaying--;
@@ -125,6 +122,7 @@ var player = new (function(player) {
         var target = this.playlist[from];
         this.playlist.splice(from, 1);
         this.playlist.splice(to, 0, target);
+        localStorage.playlist = JSON.stringify(this.playlist);
     }
 
     this.currentIndex = function() {
