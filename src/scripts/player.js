@@ -125,6 +125,11 @@ var player = new (function(player) {
         localStorage.playlist = JSON.stringify(this.playlist);
     }
 
+    this.changeTitle = function(index, title) {
+        this.playlist[index].title = title;
+        localStorage.playlist = JSON.stringify(this.playlist);
+    }
+
     this.currentIndex = function() {
         return currentPlayingRemoved ? -1 : currentPlaying;
     }

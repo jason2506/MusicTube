@@ -35,7 +35,6 @@
                 player.move(from, to);
             }
         });
-        components.playlist.disableSelection();
     }
 
     function appendPlaylistItem(index, title) {
@@ -46,7 +45,30 @@
                 player.play(index);
             });
 
-        var itemTitle = $('<span>').addClass('title').text(title);
+        var itemTitle = $('<span>')
+            .addClass('title')
+            .text(title)
+            .attr('contentEditable', 'true')
+            .dblclick(function(event) {
+                event.stopPropagation();
+            })
+            .mousedown(function() {
+                components.playlist.sortable('disable');
+                $(this).addClass('edit');
+            })
+            .keypress(function(event) {
+                if (event.keyCode == 13) {
+                    this.blur();
+                }
+            })
+            .blur(function() {
+                components.playlist.sortable('enable');
+                $(this).removeClass('edit');
+
+                var index = $(this).parent().attr('index') - 1;
+                var title = $(this).text();
+                player.changeTitle(index, title);
+            });
         item.append(itemTitle);
 
         var deleteButton = $('<img>')
