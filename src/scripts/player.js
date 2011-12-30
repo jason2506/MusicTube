@@ -127,6 +127,10 @@ var player = new (function(player) {
         this.playlist.splice(to, 0, target);
     }
 
+    this.changeTitle = function(index, title) {
+        this.playlist[index].title = title;
+    }
+
     this.currentIndex = function() {
         return currentPlayingRemoved ? -1 : currentPlaying;
     }
