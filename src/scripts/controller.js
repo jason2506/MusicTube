@@ -64,6 +64,7 @@
             .blur(function() {
                 components.playlist.sortable('enable');
                 $(this).removeClass('edit');
+                $(this).scrollLeft(0);
 
                 var index = $(this).parent().attr('index') - 1;
                 var title = $(this).text();
