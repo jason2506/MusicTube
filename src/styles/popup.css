@@ -100,7 +100,7 @@ body {
 
 #playlist li:hover .title {
   display: inline-block;
-  max-width: 190px;
+  max-width: 170px;
   overflow: hidden;
 }
 
@@ -109,6 +109,11 @@ body {
   display: inline-block;
   float: right;
   margin: 5px 2px;
+}
+
+#playlist .title {
+  max-width: 195px;
+  overflow: hidden;
 }
 
 #playlist .remove {
