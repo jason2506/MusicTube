@@ -95,10 +95,41 @@ button:active, input[type="button"]:active, input[type="submit"]:active {
   display: block;
 }
 
+.page .content {
+  display: table;
+  width: 100%;
+}
+
+.page section {
+  display: table-row;
+}
+
+.page section > * {
+  border-bottom: 1px solid #EEE;
+  display: table-cell;
+  padding-top: 17px;
+  padding-bottom: 20px;
+}
+
+.page section:last-child > * {
+  border: none;
+}
+
 .page h2 {
   border-bottom: 1px solid #EEE;
   margin: 0;
   padding: 13px 24px 4px 0;
+}
+
+.page h3 {
+  margin: 0;
+  padding-right: 10px;
+  width: 130px;
+}
+
+.field {
+  color: #444;
+  margin: 5px 0;
 }
 
 .msg {

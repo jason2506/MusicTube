@@ -2,6 +2,13 @@
     var bgPage = chrome.extension.getBackgroundPage();
     var player = bgPage.player;
 
+    /*
+     * Player Options
+     */
+
+    /*
+     * Export / Import
+     */
     exportPlaylist();
     $('#submit-import').click(importPlaylist);
     $('#refresh-export').click(exportPlaylist);
