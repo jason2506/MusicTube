@@ -9,10 +9,41 @@
     <div id="sidebar-container">
       <h1>MusicTube Options</h1>
       <ul id="sidebar">
+        <li rel="player-options-page">Player Options</li>
         <li rel="import-export-page">Import/Export</li>
       </ul>
     </div>
     <div id="main">
+      <div id="player-options-page" class="page">
+        <h2>Player Options</h2>
+        <div class="content">
+          <section>
+            <h3>Play Mode</h3>
+            <div class="fields">
+              <div class="field">
+                <input type="radio" id="playmode-normal" name="playmode" value="normal" />
+                <label for="playmode-normal">Normal</label>
+              </div>
+              <div class="field">
+                <input type="radio" id="playmode-repeat" name="playmode" value="repeat" />
+                <label for="playmode-repeat">Repeat All</label>
+              </div>
+              <div class="field">
+                <input type="radio" id="playmode-repeat-one" name="playmode" value="repeat-one" />
+                <label for="playmode-repeat-one">Repeat One</label>
+              </div>
+              <div class="field">
+                <input type="radio" id="playmode-suffle" name="playmode" value="suffle" disabled="true" />
+                <label for="playmode-suffle">Shuffle (not available)</label>
+              </div>
+              <div class="field">
+                <input type="radio" id="playmode-shuffle-repeat" name="playmode" value="shuffle-repeat" disabled="true" />
+                <label for="playmode-shuffle-repeat">Shuffle &amp; Repeat (not available)</label>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
       <div id="import-export-page" class="page">
         <h2>Import/Export</h2>
         <div class="content">

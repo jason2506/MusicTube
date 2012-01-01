@@ -2,6 +2,23 @@
     var bgPage = chrome.extension.getBackgroundPage();
     var player = bgPage.player;
 
+    /*
+     * Player Options
+     */
+    $('input[name=playmode]:radio').each(function() {
+        var mode = player.playmode();
+        if ($(this).val() == mode)
+            $(this).attr('checked', 'true')
+    });
+
+    $('input[name=playmode]:radio').click(function() {
+        var mode = $(this).val();
+        player.playmode(mode);
+    });
+
+    /*
+     * Export / Import
+     */
     exportPlaylist();
     $('#submit-import').click(importPlaylist);
     $('#refresh-export').click(exportPlaylist);
