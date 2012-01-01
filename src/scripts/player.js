@@ -13,12 +13,12 @@ var player = new (function(player) {
 
     player.on('ended', this, function(event) {
         var that = event.data;
-        if (that.playlist.length > 0) {
-            that.play((currentPlaying + 1) % that.playlist.length);
-        }
-        else {
+        var mode = that.playmode();
+        var next = nextIndex(mode, that.playlist.length);
+        if (next >= 0)
+            that.play(next);
+        else
             player.attr('src', '');
-        }
     });
 
     this.play = function(index) {
@@ -97,6 +97,13 @@ var player = new (function(player) {
             player[0].muted = mute;
     }
 
+    this.playmode = function(mode) {
+        if (mode == undefined)
+            return localStorage.playmode || 'normal';
+        else
+            localStorage.playmode = mode;
+    }
+
     this.add = function(id, title) {
         this.playlist.push({id: id, title: title});
         localStorage.playlist = JSON.stringify(this.playlist);
@@ -132,6 +139,33 @@ var player = new (function(player) {
 
     this.currentIndex = function() {
         return currentPlayingRemoved ? -1 : currentPlaying;
+    }
+
+    function nextIndex(mode, length) {
+        if (length == 0) return -1;
+
+        switch (mode) {
+            case 'normal':
+                if (currentPlaying + 1 < length)
+                    return currentPlaying + 1;
+                else
+                    return -1;
+
+            case 'repeat':
+                return (currentPlaying + 1) % length;
+
+            case 'repeat-one':
+                return currentPlaying;
+
+            //case 'shuffle':
+            //    return Math.floor(Math.random() * length);
+
+            //case 'shuffle-repeat':
+            //    return Math.floor(Math.random() * length);
+
+            default:
+                return -1;
+        }
     }
 
     function fetchVideoId(content) {
