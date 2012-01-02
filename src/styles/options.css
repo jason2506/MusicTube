@@ -109,6 +109,7 @@ button:active, input[type="button"]:active, input[type="submit"]:active {
   display: table-cell;
   padding-top: 17px;
   padding-bottom: 20px;
+  vertical-align: top;
 }
 
 .page section:last-child > * {
@@ -149,30 +150,14 @@ button:active, input[type="button"]:active, input[type="submit"]:active {
   background: #F99;
 }
 
-#import-export-page label {
-  display: block;
-  font-size: 150%;
-  font-weight: bold;
-  margin: 20px 0 10px;
-}
-
 #import-export-page textarea {
   display: block;
   font-size: inherit;
   height: 200px;
-  width: 100%;
+  width: 95%;
 }
 
 #import-export-page input[type="button"] {
   margin-top: 8px;
-}
-
-#import-container, #export-container {
-  display: inline-block;
-  width: 47.5%;
-}
-
-#export-container {
-  margin-left: 4%;
 }
 

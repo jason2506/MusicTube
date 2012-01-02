@@ -48,16 +48,20 @@
         <h2>Import/Export</h2>
         <div class="content">
           <div class="msg"></div>
-          <div id="import-container">
-            <label for="import">Import:</label>
-            <textarea id="import"></textarea>
-            <input type="button" id="submit-import" value="Submit" />
-          </div>
-          <div id="export-container">
-            <label for="export">Export:</label>
-            <textarea id="export" readonly="true"></textarea>
-            <input type="button" id="refresh-export" value="Refresh" />
-          </div>
+          <section>
+            <h3>Import</h3>
+            <div class="field">
+              <textarea id="import"></textarea>
+              <input type="button" id="submit-import" value="Submit" />
+            </div>
+          </section>
+          <section>
+            <h3>Export</h3>
+            <div class="field">
+              <textarea id="export" readonly="true"></textarea>
+              <input type="button" id="refresh-export" value="Refresh" />
+            </div>
+          </section>
         </div>
       </div>
     </div>
