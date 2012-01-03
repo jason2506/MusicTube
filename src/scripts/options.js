@@ -3,6 +3,19 @@
     var player = bgPage.player;
 
     /*
+     * Sidebar Control
+     */
+    $('#sidebar li').click(function() {
+        $('.current').removeClass('current');
+
+        var targetId = $(this).attr('rel');
+        $(this).addClass('current');
+        $('#' + targetId).addClass('current');
+    });
+
+    $('#sidebar li:first').click();
+
+    /*
      * Player Options
      */
     $('input[name=playmode]:radio').each(function() {
@@ -22,16 +35,6 @@
     exportPlaylist();
     $('#submit-import').click(importPlaylist);
     $('#refresh-export').click(exportPlaylist);
-
-    $('#sidebar li').click(function() {
-        $('.current').removeClass('current');
-
-        var targetId = $(this).attr('rel');
-        $(this).addClass('current');
-        $('#' + targetId).addClass('current');
-    });
-
-    $('#sidebar li:first').click();
 
     function importPlaylist() {
         var msg = $('#import-export-page .msg');
