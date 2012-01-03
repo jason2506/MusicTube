@@ -2,10 +2,13 @@ var player = new (function(player) {
     var currentPlaying = -1;
     var currentPlayingRemoved = false;
 
-    // Loads playlist from localStorage
     if (localStorage.playlist == undefined)
         localStorage.playlist = '[]';
     this.playlist = JSON.parse(localStorage.playlist);
+
+    var playedNumber = 0;
+    var isPlayed = new Array(this.playlist.length);
+    resetPlayedRecord();
 
     player.on('readyToPlay', function(event) {
         this.play();
@@ -29,6 +32,11 @@ var player = new (function(player) {
                 this.play(0);
         }
         else {
+            if (!isPlayed[index]) {
+                isPlayed[index] = true;
+                playedNumber++;
+            }
+
             currentPlaying = index;
             currentPlayingRemoved = false;
             var videoId = this.playlist[index].id;
@@ -100,16 +108,23 @@ var player = new (function(player) {
     this.playmode = function(mode) {
         if (mode == undefined)
             return localStorage.playmode || 'repeat';
-        else
+        else {
             localStorage.playmode = mode;
+            if (mode == 'shuffle')
+                resetPlayedRecord();
+        }
     }
 
     this.add = function(id, title) {
+        isPlayed.push(false);
+
         this.playlist.push({id: id, title: title});
         localStorage.playlist = JSON.stringify(this.playlist);
     }
 
     this.remove = function(index) {
+        isPlayed.splice(index, 1);
+
         this.playlist.splice(index, 1);
         localStorage.playlist = JSON.stringify(this.playlist);
 
@@ -126,6 +141,10 @@ var player = new (function(player) {
         else if (to <= currentPlaying && currentPlaying < from)
             currentPlaying++;
 
+        var isTargetPlayed = isPlayed[index];
+        isPlayed.splice(from, 1);
+        isPlayed.splice(to, 0, isTargetPlayed);
+
         var target = this.playlist[from];
         this.playlist.splice(from, 1);
         this.playlist.splice(to, 0, target);
@@ -141,6 +160,13 @@ var player = new (function(player) {
         return currentPlayingRemoved ? -1 : currentPlaying;
     }
 
+    function resetPlayedRecord() {
+        playedNumber = 0;
+        for (var index = 0; index < isPlayed.length; index++) {
+            isPlayed[index] = false;
+        }
+    }
+
     function nextIndex(mode, length) {
         if (length == 0) return -1;
 
@@ -151,8 +177,16 @@ var player = new (function(player) {
             case 'repeat-one':
                 return currentPlaying;
 
-            //case 'shuffle':
-            //    return Math.floor(Math.random() * length);
+            case 'shuffle':
+                if (playedNumber == length)
+                    resetPlayedRecord();
+
+                var selected;
+                do {
+                    selected = Math.floor(Math.random() * length);
+                } while(isPlayed[selected]);
+
+                return selected;
 
             default:
                 return -1;
