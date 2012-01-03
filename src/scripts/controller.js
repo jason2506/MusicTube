@@ -73,7 +73,7 @@
             });
         item.append(itemTitle);
 
-        var deleteButton = $('<img>')
+        var removeButton = $('<img>')
             .attr('src', 'icons/remove.png')
             .addClass('remove')
             .click(function() {
@@ -81,7 +81,7 @@
                 player.remove(index);
                 removePlaylistItem(index);
             });
-        item.append(deleteButton);
+        item.append(removeButton);
 
         components.playlist.append(item);
     }

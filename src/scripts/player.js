@@ -43,7 +43,7 @@ var player = new (function(player) {
             $.ajax({
                 url: 'http://www.youtube.com/watch?v=' + videoId,
                 success: function(data) {
-                    var url = fetchVideoId(data);
+                    var url = fetchVideoUrl(data);
                     player.attr('src', url)
                     player.trigger('readyToPlay');
                 }
@@ -193,7 +193,7 @@ var player = new (function(player) {
         }
     }
 
-    function fetchVideoId(content) {
+    function fetchVideoUrl(content) {
         const fmtStreamMapPattern = /"url_encoded_fmt_stream_map": "([^"]+)"/;
         const fmtUrlParrern = /url=([^&]+)[^,]+&itag=43/;
         var streamMapMatch = fmtStreamMapPattern.exec(content);
