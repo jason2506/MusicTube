@@ -99,7 +99,7 @@ var player = new (function(player) {
 
     this.playmode = function(mode) {
         if (mode == undefined)
-            return localStorage.playmode || 'normal';
+            return localStorage.playmode || 'repeat';
         else
             localStorage.playmode = mode;
     }
@@ -145,12 +145,6 @@ var player = new (function(player) {
         if (length == 0) return -1;
 
         switch (mode) {
-            case 'normal':
-                if (currentPlaying + 1 < length)
-                    return currentPlaying + 1;
-                else
-                    return -1;
-
             case 'repeat':
                 return (currentPlaying + 1) % length;
 
@@ -158,9 +152,6 @@ var player = new (function(player) {
                 return currentPlaying;
 
             //case 'shuffle':
-            //    return Math.floor(Math.random() * length);
-
-            //case 'shuffle-repeat':
             //    return Math.floor(Math.random() * length);
 
             default:
