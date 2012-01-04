@@ -115,6 +115,11 @@ var player = new (function(player) {
         }
     }
 
+    this.import = function(playlist) {
+        this.playlist = playlist;
+        localStorage.playlist = JSON.stringify(this.playlist);
+    }
+
     this.add = function(id, title) {
         isPlayed.push(false);
 

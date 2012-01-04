@@ -86,7 +86,7 @@
             });
         }
 
-        player.playlist = playlist;
+        player.import(playlist);
         msg.addClass('success').text('Import successful.');
     }
 
