@@ -2,9 +2,9 @@
 
 ## Screenshots
 
-!['Add' Button](screenshots/add.png)
+!['Add' Button](https://github.com/jason2506/MusicTube/raw/master/screenshots/add.png)
 
-![Popup Page](screenshots/popup.png)
+![Popup Page](https://github.com/jason2506/MusicTube/raw/master/screenshots/popup.png)
 
 ## License
 
