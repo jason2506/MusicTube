@@ -28,6 +28,14 @@ button:active, input[type="button"]:active, input[type="submit"]:active {
   color: #333;
 }
 
+textarea {
+  display: block;
+  font-size: inherit;
+  height: 200px;
+  margin: 5px 0;
+  width: 95%;
+}
+
 #sidebar-container {
   border-right: 1px solid #c6c9ce;
   background: -webkit-linear-gradient(rgba(234, 238, 243, 0.2), #EAEEF3), -webkit-linear-gradient(left, #EAEEF3, #EAEEF3 97%, #D3D7DB);
@@ -81,6 +89,7 @@ button:active, input[type="button"]:active, input[type="submit"]:active {
 }
 
 #main {
+  box-sizing: border-box;
   margin-left: 216px;
   max-width: 888px;
   min-width: 600px;
@@ -107,13 +116,17 @@ button:active, input[type="button"]:active, input[type="submit"]:active {
 .page section > * {
   border-bottom: 1px solid #EEE;
   display: table-cell;
-  padding-top: 17px;
+  padding-top: 22px;
   padding-bottom: 20px;
   vertical-align: top;
 }
 
 .page section:last-child > * {
   border: none;
+}
+
+.page section > .fields {
+  padding-top: 17px;
 }
 
 .page h2 {
@@ -148,16 +161,5 @@ button:active, input[type="button"]:active, input[type="submit"]:active {
 .msg.error {
   display: block;
   background: #F99;
-}
-
-#import-export-page textarea {
-  display: block;
-  font-size: inherit;
-  height: 200px;
-  width: 95%;
-}
-
-#import-export-page input[type="button"] {
-  margin-top: 8px;
 }
 
