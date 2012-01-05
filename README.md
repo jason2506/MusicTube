@@ -2,9 +2,9 @@
 
 ## Screenshots
 
-![Screenshots 1](http://dl.dropbox.com/u/10533595/MusicTube1.png)
+!['Add' Button](screenshots/add.png)
 
-![Screenshots 2](http://dl.dropbox.com/u/10533595/MusicTube2.png)
+![Popup Page](screenshots/popup.png)
 
 ## License
 
