@@ -1,5 +1,5 @@
 body {
-  font-size: 14px;
+  font-size: 13px;
   padding: 5px;
   width: 260px;
 }
@@ -35,24 +35,24 @@ body {
 }
 
 #control {
-  padding: 10px 0;
-  vertical-align: top;
+  padding: 11px 0;
+}
+
+#control > * {
+  vertical-align: middle;
 }
 
 #time {
-  font-size: 13px;
   padding: 0 7px;
-  position: relative;
-  top: -3px;
 }
 
 #volume {
-  position: relative;
-  top: -1px;
   float: right;
+  margin: -2px;
 }
 
 #volume-range {
+  height: 16px;
   width: 60px;
 }
 
@@ -72,10 +72,14 @@ body {
   border: 1px solid #CCC;
   height: 26px;
   list-style: none;
-  margin-bottom: -1px;
+  margin-top: -1px;
   overflow: hidden;
   padding: 0 5px;
   white-space: nowrap;
+}
+
+#playlist li:first-child {
+  margin: 0;
 }
 
 #playlist li > * {
