@@ -1,7 +1,7 @@
 body {
-  font-size: 13px;
+  font-size: 14px;
   padding: 5px;
-  width: 260px;
+  width: 270px;
 }
 
 ::-webkit-scrollbar {
@@ -31,7 +31,7 @@ body {
   background: #CCC;
   border: 1px solid #999;
   height: 5px;
-  width: 258px;
+  width: 268px;
 }
 
 #control {
@@ -43,6 +43,7 @@ body {
 }
 
 #time {
+  font-size: 13px;
   padding: 0 7px;
 }
 
@@ -58,10 +59,10 @@ body {
 
 #playlist {
   margin: 0;
-  max-height: 300px;
+  max-height: 311px;
   overflow-x: hidden;
-  padding: 0;
-  width: 260px;
+  padding: 1px 0 0;
+  width: 270px;
 }
 
 #playlist span {
@@ -70,7 +71,7 @@ body {
 
 #playlist li {
   border: 1px solid #CCC;
-  height: 26px;
+  height: 30px;
   list-style: none;
   margin-top: -1px;
   overflow: hidden;
@@ -78,22 +79,13 @@ body {
   white-space: nowrap;
 }
 
-#playlist li:first-child {
-  margin: 0;
-}
-
-#playlist li > * {
-  vertical-align: middle;
-}
-
 #playlist li:before {
   content: attr(index);
   display: inline-block;
   font-weight: bold;
-  text-align: right;
-  margin: 6px 0;
+  margin: 9px 0;
   padding-right: 8px;
-  vertical-align: middle;
+  text-align: right;
   width: 25px;
 }
 
@@ -107,7 +99,7 @@ body {
 
 #playlist li:hover .title {
   display: inline-block;
-  max-width: 170px;
+  max-width: 180px;
   overflow: hidden;
 }
 
@@ -115,11 +107,11 @@ body {
   cursor: pointer;
   display: inline-block;
   float: right;
-  margin: 5px 2px;
+  margin: 7px 2px;
 }
 
 #playlist .title {
-  max-width: 195px;
+  max-width: 205px;
   overflow: hidden;
 }
 
@@ -135,5 +127,7 @@ body {
   font-size: 85%;
   margin: 0 2px;
   padding: 1px 3px;
+  position: relative;
+  top: -1px;
 }
 
