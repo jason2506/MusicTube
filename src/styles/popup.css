@@ -70,14 +70,16 @@ body {
 
 #playlist li {
   border: 1px solid #CCC;
-  border-top: none;
+  height: 26px;
   list-style: none;
+  margin-bottom: -1px;
+  overflow: hidden;
   padding: 0 5px;
   white-space: nowrap;
 }
 
-#playlist li:first-child {
-  border-top: 1px solid #CCC;
+#playlist li > * {
+  vertical-align: middle;
 }
 
 #playlist li:before {
@@ -87,6 +89,7 @@ body {
   text-align: right;
   margin: 6px 0;
   padding-right: 8px;
+  vertical-align: middle;
   width: 25px;
 }
 
