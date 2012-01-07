@@ -157,6 +157,8 @@ var player = new (function(player) {
     }
 
     this.changeTitle = function(index, title) {
+        if (title.length == 0) return;
+
         this.playlist[index].title = title;
         localStorage.playlist = JSON.stringify(this.playlist);
     }

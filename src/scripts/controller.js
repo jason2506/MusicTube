@@ -69,7 +69,9 @@
 
                 var index = $(this).parent().attr('index') - 1;
                 var title = $(this).text();
+
                 player.changeTitle(index, title);
+                $(this).text(player.playlist[index].title);
             });
         item.append(itemTitle);
 
