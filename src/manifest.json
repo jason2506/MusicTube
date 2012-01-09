@@ -1,6 +1,6 @@
 {
     "name": "MusicTube",
-    "version": "0.6.8",
+    "version": "0.6.9",
     "description": "Playing YouTube music in your web browser.",
     "update_url": "https://raw.github.com/jason2506/MusicTube/master/updates.xml",
     "icons": {

@@ -146,7 +146,7 @@ var player = new (function(player) {
         else if (to <= currentPlaying && currentPlaying < from)
             currentPlaying++;
 
-        var isTargetPlayed = isPlayed[index];
+        var isTargetPlayed = isPlayed[from];
         isPlayed.splice(from, 1);
         isPlayed.splice(to, 0, isTargetPlayed);
 
