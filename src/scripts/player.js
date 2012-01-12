@@ -1,6 +1,5 @@
 var player = new (function(player) {
     var currentPlaying = -1;
-    var currentPlayingRemoved = false;
 
     if (localStorage.playlist == undefined)
         localStorage.playlist = '[]';
@@ -38,7 +37,6 @@ var player = new (function(player) {
             }
 
             currentPlaying = index;
-            currentPlayingRemoved = false;
             var videoId = this.playlist[index].id;
             $.ajax({
                 url: 'http://www.youtube.com/watch?v=' + videoId,
@@ -71,17 +69,21 @@ var player = new (function(player) {
     }
 
     this.duration = function() {
+        if (player.attr('src').length == 0)
+            return 0;
         return player[0].duration;
     }
 
     this.bufferedTime = function() {
-        if (player[0].buffered.length == 0)
+        if (player.attr('src').length == 0 && player[0].buffered.length == 0)
             return 0;
         return player[0].buffered.end(0);
     }
 
     this.currentTime = function(seconds) {
-        if (seconds == undefined)
+        if (player.attr('src').length == 0)
+            return 0;
+        else if (seconds == undefined)
             return player[0].currentTime;
         else
             player[0].currentTime = seconds;
@@ -133,9 +135,18 @@ var player = new (function(player) {
         this.playlist.splice(index, 1);
         localStorage.playlist = JSON.stringify(this.playlist);
 
-        currentPlayingRemoved = index == currentPlaying;
-        if (currentPlaying >= index)
+        if (currentPlaying > index) {
             currentPlaying--;
+        }
+        else if (currentPlaying == index) {
+            currentPlaying = -1;
+            player.attr('src', '');
+
+            if (!player[0].paused) {
+                player[0].pause();
+                player.trigger('ended');
+            }
+        }
     }
 
     this.move = function(from, to) {
@@ -164,7 +175,7 @@ var player = new (function(player) {
     }
 
     this.currentIndex = function() {
-        return currentPlayingRemoved ? -1 : currentPlaying;
+        return currentPlaying;
     }
 
     function resetPlayedRecord() {
