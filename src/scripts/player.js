@@ -28,7 +28,7 @@ var player = new (function(player) {
             if (player.attr('src').length > 0)
                 player.trigger('readyToPlay');
             else if (this.playlist.length > 0)
-                this.play(0);
+                player.trigger('ended');
         }
         else {
             if (!isPlayed[index]) {
