@@ -1,11 +1,22 @@
 (function() {
     var bgPage = chrome.extension.getBackgroundPage();
     var player = bgPage.player;
+    var componments = {
+        sidebarItems:       $('#sidebar li'),
+
+        playmodeSelectors:  $('input[name=playmode]:radio'),
+
+        importResultMsg:    $('#import-export-page .msg'),
+        importTextarea:     $('#import'),
+        importButton:       $('#submit-import'),
+        exportTextarea:     $('#export'),
+        exportButton:       $('#refresh-export')
+    };
 
     /*
      * Sidebar Control
      */
-    $('#sidebar li').click(function() {
+    componments.sidebarItems.click(function() {
         $('.current').removeClass('current');
 
         var targetId = $(this).attr('rel');
@@ -13,18 +24,18 @@
         $('#' + targetId).addClass('current');
     });
 
-    $('#sidebar li:first').click();
+    $(componments.sidebarItems[0]).click();
 
     /*
      * Player Options
      */
-    $('input[name=playmode]:radio').each(function() {
+    componments.playmodeSelectors.each(function() {
         var mode = player.playmode();
         if ($(this).val() == mode)
             $(this).attr('checked', 'true')
     });
 
-    $('input[name=playmode]:radio').click(function() {
+    componments.playmodeSelectors.click(function() {
         var mode = $(this).val();
         player.playmode(mode);
     });
@@ -33,14 +44,14 @@
      * Export / Import
      */
     exportPlaylist();
-    $('#submit-import').click(importPlaylist);
-    $('#refresh-export').click(exportPlaylist);
+    componments.importButton.click(importPlaylist);
+    componments.exportButton.click(exportPlaylist);
 
     function importPlaylist() {
-        var msg = $('#import-export-page .msg');
+        var msg = componments.importResultMsg;
         msg.removeClass('success error');
 
-        var json = $('#import').val();
+        var json = componments.importTextarea.val();
         var result;
         try {
             result = JSON.parse(json);
@@ -92,6 +103,6 @@
 
     function exportPlaylist() {
         var json = JSON.stringify(player.playlist);
-        $('#export').val(json);
+        componments.exportTextarea.val(json);
     }
 })();
