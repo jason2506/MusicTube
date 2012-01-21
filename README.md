@@ -1,5 +1,14 @@
 # MusicTube
 
+## Features
+
+* The "Add to MusicTube" button in the YouTube page
+* Drag & Drop Sortable Playlist
+* Editable Music Title
+* Import/Export Playlist
+* Play Mode Selection
+* Autoupdate
+
 ## Screenshots
 
 !['Add' Button](https://github.com/jason2506/MusicTube/raw/master/screenshots/add.png)
