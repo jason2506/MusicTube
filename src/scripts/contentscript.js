@@ -6,7 +6,7 @@
             .click(add)
             .attr({
                 'id': 'playlist-add-button',
-                'class': 'yt-uix-tooltip-reverse yt-uix-button yt-uix-tooltip',
+                'class': 'yt-uix-tooltip-reverse yt-uix-button yt-uix-button-default yt-uix-tooltip',
                 'data-tooltip': 'Add to MusicTube Playlist',
                 'data-tooltip-text': 'Add to MusicTube Playlist'
             });
