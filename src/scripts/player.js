@@ -149,6 +149,14 @@ var player = new (function(player) {
         }
     }
 
+    this.contains = function(id) {
+        for (index = 0; index < this.playlist.length; index++)
+            if (this.playlist[index].id == id)
+                return true;
+
+        return false;
+    }
+
     this.move = function(from, to) {
         if (from == currentPlaying)
             currentPlaying = to;
