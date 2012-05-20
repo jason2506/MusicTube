@@ -27,7 +27,7 @@
                 var step = from > to ? -1 : 1;
 
                 var items = components.playlist.children();
-                for (var index = from; index != to; index += step) {
+                for (var index = from; index !== to; index += step) {
                     $(items[index]).attr('index', index + 1);
                 }
 
@@ -57,7 +57,7 @@
                 $(this).attr('contentEditable', 'true');
             })
             .keypress(function(event) {
-                if (event.keyCode == 13) {
+                if (event.keyCode === 13) {
                     this.blur();
                 }
             })
@@ -141,7 +141,7 @@
     }
 
     function updateMute() {
-        var muted = player.muted() || (player.volume() == 0);
+        var muted = player.muted() || (player.volume() === 0);
         var url = 'icons/' + (muted ? 'mute' : 'volume') + '.png';
         components.mute.attr('src', url);
     }
@@ -193,7 +193,7 @@
         var currentIndex = player.currentIndex() + 1;
         for (var index = 0; index < items.length; index++)
         {
-            if ($(items[index]).attr('index') == currentIndex)
+            if (parseInt($(items[index]).attr('index'), 10) === currentIndex)
                 $(items[index]).addClass('current');
             else
                 $(items[index]).removeClass('current');

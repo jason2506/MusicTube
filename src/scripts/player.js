@@ -1,7 +1,8 @@
 var player = new (function(player) {
     var currentPlaying = -1;
 
-    if (localStorage.playlist == undefined)
+    if (typeof localStorage.playlist === 'undefined' ||
+        localStorage.playlist === null)
         localStorage.playlist = '[]';
     this.playlist = JSON.parse(localStorage.playlist);
 
@@ -24,7 +25,7 @@ var player = new (function(player) {
     });
 
     this.play = function(index) {
-        if (index == undefined) {
+        if (typeof index === 'undefined' || isNaN(index)) {
             if (player.attr('src').length > 0)
                 player.trigger('readyToPlay');
             else if (this.playlist.length > 0)
@@ -69,28 +70,28 @@ var player = new (function(player) {
     };
 
     this.duration = function() {
-        if (player.attr('src').length == 0)
+        if (player.attr('src').length === 0)
             return 0;
         return player[0].duration;
     };
 
     this.bufferedTime = function() {
-        if (player.attr('src').length == 0 && player[0].buffered.length == 0)
+        if (player.attr('src').length === 0 && player[0].buffered.length === 0)
             return 0;
         return player[0].buffered.end(0);
     };
 
     this.currentTime = function(seconds) {
-        if (player.attr('src').length == 0)
+        if (player.attr('src').length === 0)
             return 0;
-        else if (seconds == undefined)
+        else if (typeof seconds === 'undefined' || isNaN(seconds))
             return player[0].currentTime;
         else
             player[0].currentTime = seconds;
     };
 
     this.volume = function(volume) {
-        if (volume == undefined)
+        if (typeof volume === 'undefined' || isNaN(volume))
             return player[0].volume;
         else
             player[0].volume = volume;
@@ -101,18 +102,18 @@ var player = new (function(player) {
     };
 
     this.muted = function(mute) {
-        if (mute == undefined)
+        if (typeof mute === 'undefined' || isNaN(mute))
             return player[0].muted;
         else
             player[0].muted = mute;
     };
 
     this.playmode = function(mode) {
-        if (mode == undefined)
+        if (typeof mode === 'undefined' || mode === null)
             return localStorage.playmode || 'repeat';
         else {
             localStorage.playmode = mode;
-            if (mode == 'shuffle')
+            if (mode === 'shuffle')
                 resetPlayedRecord();
         }
     };
@@ -130,6 +131,7 @@ var player = new (function(player) {
     };
 
     this.remove = function(index) {
+        index = parseInt(index, 10);
         isPlayed.splice(index, 1);
 
         this.playlist.splice(index, 1);
@@ -138,7 +140,7 @@ var player = new (function(player) {
         if (currentPlaying > index) {
             currentPlaying--;
         }
-        else if (currentPlaying == index) {
+        else if (currentPlaying === index) {
             currentPlaying = -1;
             player.attr('src', '');
 
@@ -150,15 +152,19 @@ var player = new (function(player) {
     };
 
     this.contains = function(id) {
+        id = parseInt(id, 10);
         for (index = 0; index < this.playlist.length; index++)
-            if (this.playlist[index].id == id)
+            if (this.playlist[index].id === id)
                 return true;
 
         return false;
     };
 
     this.move = function(from, to) {
-        if (from == currentPlaying)
+        from = parseInt(from, 10);
+        to = parseInt(to, 10);
+
+        if (from === currentPlaying)
             currentPlaying = to;
         else if (from < currentPlaying && currentPlaying <= to)
             currentPlaying--;
@@ -176,7 +182,7 @@ var player = new (function(player) {
     };
 
     this.changeTitle = function(index, title) {
-        if (title.length == 0) return;
+        if (typeof title === 'string' && title.length === 0) return;
 
         this.playlist[index].title = title;
         localStorage.playlist = JSON.stringify(this.playlist);
@@ -194,7 +200,7 @@ var player = new (function(player) {
     }
 
     function nextIndex(mode, length) {
-        if (length == 0) return -1;
+        if (length === 0) return -1;
 
         switch (mode) {
             case 'repeat':
@@ -204,7 +210,7 @@ var player = new (function(player) {
                 return currentPlaying;
 
             case 'shuffle':
-                if (playedNumber == length)
+                if (playedNumber === length)
                     resetPlayedRecord();
 
                 var selected;
