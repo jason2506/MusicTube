@@ -69,7 +69,7 @@
         }
 
         const idPattern = /^[a-zA-Z0-9\-_]{11}$/;
-        var playlist = new Array();
+        var playlist = [];
         for (var index = 0; index < result.length; index++)
         {
             var id = result[index].id;
