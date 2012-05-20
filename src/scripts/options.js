@@ -32,7 +32,7 @@
     componments.playmodeSelectors.each(function() {
         var mode = player.playmode();
         if ($(this).val() == mode)
-            $(this).attr('checked', 'true')
+            $(this).attr('checked', 'true');
     });
 
     componments.playmodeSelectors.click(function() {

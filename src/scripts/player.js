@@ -42,43 +42,43 @@ var player = new (function(player) {
                 url: 'http://www.youtube.com/watch?v=' + videoId,
                 success: function(data) {
                     var url = fetchVideoUrl(data);
-                    player.attr('src', url)
+                    player.attr('src', url);
                     player.trigger('readyToPlay');
                 }
             });
         }
-    }
+    };
 
     this.paused = function() {
         return player[0].paused;
-    }
+    };
 
     this.pause = function() {
         player[0].pause();
-    }
+    };
 
     this.toggle = function() {
         if (player[0].paused)
             this.play();
         else
             this.pause();
-    }
+    };
 
     this.seek = function(percent) {
         player[0].currentTime = player[0].duration * percent;
-    }
+    };
 
     this.duration = function() {
         if (player.attr('src').length == 0)
             return 0;
         return player[0].duration;
-    }
+    };
 
     this.bufferedTime = function() {
         if (player.attr('src').length == 0 && player[0].buffered.length == 0)
             return 0;
         return player[0].buffered.end(0);
-    }
+    };
 
     this.currentTime = function(seconds) {
         if (player.attr('src').length == 0)
@@ -87,25 +87,25 @@ var player = new (function(player) {
             return player[0].currentTime;
         else
             player[0].currentTime = seconds;
-    }
+    };
 
     this.volume = function(volume) {
         if (volume == undefined)
             return player[0].volume;
         else
-            player[0].volume = volume
-    }
+            player[0].volume = volume;
+    };
 
     this.toggleMute = function() {
         player[0].muted = !player[0].muted;
-    }
+    };
 
     this.muted = function(mute) {
         if (mute == undefined)
             return player[0].muted;
         else
             player[0].muted = mute;
-    }
+    };
 
     this.playmode = function(mode) {
         if (mode == undefined)
@@ -115,19 +115,19 @@ var player = new (function(player) {
             if (mode == 'shuffle')
                 resetPlayedRecord();
         }
-    }
+    };
 
     this.import = function(playlist) {
         this.playlist = playlist;
         localStorage.playlist = JSON.stringify(this.playlist);
-    }
+    };
 
     this.add = function(id, title) {
         isPlayed.push(false);
 
         this.playlist.push({id: id, title: title});
         localStorage.playlist = JSON.stringify(this.playlist);
-    }
+    };
 
     this.remove = function(index) {
         isPlayed.splice(index, 1);
@@ -147,7 +147,7 @@ var player = new (function(player) {
                 player.trigger('ended');
             }
         }
-    }
+    };
 
     this.contains = function(id) {
         for (index = 0; index < this.playlist.length; index++)
@@ -155,7 +155,7 @@ var player = new (function(player) {
                 return true;
 
         return false;
-    }
+    };
 
     this.move = function(from, to) {
         if (from == currentPlaying)
@@ -173,18 +173,18 @@ var player = new (function(player) {
         this.playlist.splice(from, 1);
         this.playlist.splice(to, 0, target);
         localStorage.playlist = JSON.stringify(this.playlist);
-    }
+    };
 
     this.changeTitle = function(index, title) {
         if (title.length == 0) return;
 
         this.playlist[index].title = title;
         localStorage.playlist = JSON.stringify(this.playlist);
-    }
+    };
 
     this.currentIndex = function() {
         return currentPlaying;
-    }
+    };
 
     function resetPlayedRecord() {
         playedNumber = 0;

@@ -54,7 +54,7 @@
             .mousedown(function() {
                 components.playlist.sortable('disable');
                 $(this).addClass('edit');
-                $(this).attr('contentEditable', 'true')
+                $(this).attr('contentEditable', 'true');
             })
             .keypress(function(event) {
                 if (event.keyCode == 13) {
@@ -64,7 +64,7 @@
             .blur(function() {
                 components.playlist.sortable('enable');
                 $(this).removeClass('edit');
-                $(this).attr('contentEditable', 'false')
+                $(this).attr('contentEditable', 'false');
                 $(this).scrollLeft(0);
 
                 var index = $(this).parent().attr('index') - 1;
