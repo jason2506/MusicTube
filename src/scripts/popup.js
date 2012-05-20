@@ -7,7 +7,8 @@
         volume:     $('#volume-range'),
         time:       $('#time'),
         toggle:     $('#toggle'),
-        playlist:   $('#playlist')
+        playlist:   $('#playlist'),
+        template:   $('#playlist-tmpl')
     };
 
     displayPlaylist();
@@ -15,11 +16,8 @@
     startUpdate();
 
     function displayPlaylist () {
-        var playlist = player.playlist;
-        for (var index = 0; index < playlist.length; index++) {
-            appendPlaylistItem(index + 1, playlist[index].title);
-        }
-
+        var template = _.template(components.template.html());
+        components.playlist.html(template({ playlist: player.playlist }));
         components.playlist.sortable({
             stop: function(event, ui) {
                 var from = $(ui.item).attr('index') - 1;
@@ -27,7 +25,7 @@
                 var step = from > to ? -1 : 1;
 
                 var items = components.playlist.children();
-                for (var index = from; index != to; index += step) {
+                for (var index = from; index !== to; index += step) {
                     $(items[index]).attr('index', index + 1);
                 }
 
@@ -35,57 +33,6 @@
                 player.move(from, to);
             }
         });
-    }
-
-    function appendPlaylistItem(index, title) {
-        var item = $('<li>')
-            .attr('index', index)
-            .dblclick(function() {
-                var index = $(this).attr('index') - 1;
-                player.play(index);
-            });
-
-        var itemTitle = $('<span>')
-            .addClass('title')
-            .text(title)
-            .dblclick(function(event) {
-                event.stopPropagation();
-            })
-            .mousedown(function() {
-                components.playlist.sortable('disable');
-                $(this).addClass('edit');
-                $(this).attr('contentEditable', 'true')
-            })
-            .keypress(function(event) {
-                if (event.keyCode == 13) {
-                    this.blur();
-                }
-            })
-            .blur(function() {
-                components.playlist.sortable('enable');
-                $(this).removeClass('edit');
-                $(this).attr('contentEditable', 'false')
-                $(this).scrollLeft(0);
-
-                var index = $(this).parent().attr('index') - 1;
-                var title = $(this).text();
-
-                player.changeTitle(index, title);
-                $(this).text(player.playlist[index].title);
-            });
-        item.append(itemTitle);
-
-        var removeButton = $('<img>')
-            .attr('src', 'icons/remove.png')
-            .addClass('remove')
-            .click(function() {
-                var index = $(this).parent().attr('index') - 1;
-                player.remove(index);
-                removePlaylistItem(index);
-            });
-        item.append(removeButton);
-
-        components.playlist.append(item);
     }
 
     function removePlaylistItem(index) {
@@ -119,6 +66,43 @@
                 player.muted(false);
             updateMute();
         });
+
+        $('li', components.playlist).dblclick(function() {
+            var index = $(this).attr('index') - 1;
+            player.play(index);
+        });
+
+        $('.title', components.playlist)
+            .dblclick(function(event) {
+                event.stopPropagation();
+            })
+            .mousedown(function() {
+                components.playlist.sortable('disable');
+                $(this).addClass('edit');
+                $(this).attr('contentEditable', 'true');
+            })
+            .keypress(function(event) {
+                if (event.keyCode === 13)
+                    this.blur();
+            })
+            .blur(function() {
+                components.playlist.sortable('enable');
+                $(this).removeClass('edit');
+                $(this).attr('contentEditable', 'false');
+                $(this).scrollLeft(0);
+
+                var index = $(this).parent().attr('index') - 1;
+                var title = $(this).text();
+
+                player.changeTitle(index, title);
+                $(this).text(player.playlist[index].title);
+            });
+
+        $('.remove', components.playlist).click(function() {
+            var index = $(this).parent().attr('index') - 1;
+            player.remove(index);
+            removePlaylistItem(index);
+        });
     }
 
     function startUpdate() {
@@ -141,7 +125,7 @@
     }
 
     function updateMute() {
-        var muted = player.muted() || (player.volume() == 0);
+        var muted = player.muted() || (player.volume() === 0);
         var url = 'icons/' + (muted ? 'mute' : 'volume') + '.png';
         components.mute.attr('src', url);
     }
@@ -193,7 +177,7 @@
         var currentIndex = player.currentIndex() + 1;
         for (var index = 0; index < items.length; index++)
         {
-            if ($(items[index]).attr('index') == currentIndex)
+            if (parseInt($(items[index]).attr('index'), 10) === currentIndex)
                 $(items[index]).addClass('current');
             else
                 $(items[index]).removeClass('current');

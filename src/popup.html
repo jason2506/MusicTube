@@ -18,8 +18,17 @@
       </div>
     </div>
     <ol id="playlist"></ol>
+    <script id="playlist-tmpl" type="text/template">
+    <% for (var index = 0; index < playlist.length; index++) { %>
+      <li index="<%= index + 1 %>">
+        <span class="title"><%= playlist[index].title %></span>
+        <img src="icons/remove.png" class="remove" />
+      </li>
+    <% } %>
+    </script>
     <script src="scripts/jquery.js"></script>
     <script src="scripts/jquery-ui-custom.js"></script>
+    <script src="scripts/underscore.js"></script>
     <script src="scripts/popup.js"></script>
   </body>
 </html>

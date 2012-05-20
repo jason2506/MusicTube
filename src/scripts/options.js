@@ -31,8 +31,8 @@
      */
     componments.playmodeSelectors.each(function() {
         var mode = player.playmode();
-        if ($(this).val() == mode)
-            $(this).attr('checked', 'true')
+        if ($(this).val() === mode)
+            $(this).attr('checked', 'true');
     });
 
     componments.playmodeSelectors.click(function() {
@@ -69,13 +69,13 @@
         }
 
         const idPattern = /^[a-zA-Z0-9\-_]{11}$/;
-        var playlist = new Array();
+        var playlist = [];
         for (var index = 0; index < result.length; index++)
         {
             var id = result[index].id;
             var title = result[index].title;
 
-            if (typeof id != 'string') {
+            if (typeof id !== 'string') {
                 msg.addClass('error')
                     .text('The video id "' + id + '" is not a string.');
                 return;
@@ -85,7 +85,7 @@
                     .text('"' + id + '" is not a valid video id.');
                 return;
             }
-            else if (typeof title != 'string' || title.length == 0) {
+            else if (typeof title !== 'string' || title.length === 0) {
                 msg.addClass('error')
                     .text('The video title is not valid.');
                 return;
