@@ -38,51 +38,14 @@
     }
 
     function appendPlaylistItem(index, title) {
-        var item = $('<li>')
-            .attr('index', index)
-            .dblclick(function() {
-                var index = $(this).attr('index') - 1;
-                player.play(index);
-            });
+        var item = $('<li>').attr('index', index);
 
-        var itemTitle = $('<span>')
-            .addClass('title')
-            .text(title)
-            .dblclick(function(event) {
-                event.stopPropagation();
-            })
-            .mousedown(function() {
-                components.playlist.sortable('disable');
-                $(this).addClass('edit');
-                $(this).attr('contentEditable', 'true');
-            })
-            .keypress(function(event) {
-                if (event.keyCode === 13) {
-                    this.blur();
-                }
-            })
-            .blur(function() {
-                components.playlist.sortable('enable');
-                $(this).removeClass('edit');
-                $(this).attr('contentEditable', 'false');
-                $(this).scrollLeft(0);
-
-                var index = $(this).parent().attr('index') - 1;
-                var title = $(this).text();
-
-                player.changeTitle(index, title);
-                $(this).text(player.playlist[index].title);
-            });
+        var itemTitle = $('<span>').text(title)
+            .addClass('title');
         item.append(itemTitle);
 
-        var removeButton = $('<img>')
-            .attr('src', 'icons/remove.png')
-            .addClass('remove')
-            .click(function() {
-                var index = $(this).parent().attr('index') - 1;
-                player.remove(index);
-                removePlaylistItem(index);
-            });
+        var removeButton = $('<img>').attr('src', 'icons/remove.png')
+            .addClass('remove');
         item.append(removeButton);
 
         components.playlist.append(item);
@@ -118,6 +81,43 @@
             if (volume > 0)
                 player.muted(false);
             updateMute();
+        });
+
+        $('li', components.playlist).dblclick(function() {
+            var index = $(this).attr('index') - 1;
+            player.play(index);
+        });
+
+        $('.title', components.playlist)
+            .dblclick(function(event) {
+                event.stopPropagation();
+            })
+            .mousedown(function() {
+                components.playlist.sortable('disable');
+                $(this).addClass('edit');
+                $(this).attr('contentEditable', 'true');
+            })
+            .keypress(function(event) {
+                if (event.keyCode === 13)
+                    this.blur();
+            })
+            .blur(function() {
+                components.playlist.sortable('enable');
+                $(this).removeClass('edit');
+                $(this).attr('contentEditable', 'false');
+                $(this).scrollLeft(0);
+
+                var index = $(this).parent().attr('index') - 1;
+                var title = $(this).text();
+
+                player.changeTitle(index, title);
+                $(this).text(player.playlist[index].title);
+            });
+
+        $('.remove', components.playlist).click(function() {
+            var index = $(this).parent().attr('index') - 1;
+            player.remove(index);
+            removePlaylistItem(index);
         });
     }
 
