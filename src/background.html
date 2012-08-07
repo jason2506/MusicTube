@@ -4,13 +4,6 @@
     <audio id="player" src=""></audio>
     <script src="scripts/jquery.js"></script>
     <script src="scripts/player.js"></script>
-    <script>
-      chrome.extension.onRequest.addListener(function(request, sender, callback) {
-          if (request.title != undefined)
-              player.add(request.id, request.title);
-          else if (player.contains(request.id))
-              callback();
-      });
-    </script>
+    <script src="scripts/background.js"></script>
   </body>
 </html>
