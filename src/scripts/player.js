@@ -227,10 +227,11 @@ var player = new (function(player) {
 
     function fetchVideoUrl(content) {
         const fmtStreamMapPattern = /"url_encoded_fmt_stream_map": "([^"]+)"/;
-        const fmtUrlParrern = /url=([^&]+)[^,]+&itag=43/;
+        const fmtUrlParrern = /itag=43&url=([^&]+)[^,]*&sig=([^&]+)/;
         var streamMapMatch = fmtStreamMapPattern.exec(content);
         var streamMap = streamMapMatch[1].replace(/\\u0026/g, '&');
-        return unescape(fmtUrlParrern.exec(streamMap)[1]);
+        var match = fmtUrlParrern.exec(streamMap);
+        return unescape(match[1] + '&signature=' + match[2]);
     }
 })($('#player'));
 
