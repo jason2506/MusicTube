@@ -7,8 +7,7 @@
         volume:     $('#volume-range'),
         time:       $('#time'),
         toggle:     $('#toggle'),
-        playlist:   $('#playlist'),
-        template:   $('#playlist-tmpl')
+        playlist:   $('#playlist')
     };
 
     displayPlaylist();
@@ -16,8 +15,11 @@
     startUpdate();
 
     function displayPlaylist () {
-        var template = _.template(components.template.html());
-        components.playlist.html(template({ playlist: player.playlist }));
+        var playlist = player.playlist;
+        for (var index = 0; index < playlist.length; index++) {
+            appendPlaylistItem(index + 1, playlist[index].title);
+        }
+
         components.playlist.sortable({
             stop: function(event, ui) {
                 var from = $(ui.item).attr('index') - 1;
@@ -33,6 +35,20 @@
                 player.move(from, to);
             }
         });
+    }
+
+    function appendPlaylistItem(index, title) {
+        var item = $('<li>').attr('index', index);
+
+        var itemTitle = $('<span>').text(title)
+            .addClass('title');
+        item.append(itemTitle);
+
+        var removeButton = $('<img>').attr('src', 'icons/remove.png')
+            .addClass('remove');
+        item.append(removeButton);
+
+        components.playlist.append(item);
     }
 
     function removePlaylistItem(index) {
