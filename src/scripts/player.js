@@ -152,7 +152,6 @@ var player = new (function(player) {
     };
 
     this.contains = function(id) {
-        id = parseInt(id, 10);
         for (index = 0; index < this.playlist.length; index++)
             if (this.playlist[index].id === id)
                 return true;

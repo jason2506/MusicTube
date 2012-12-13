@@ -4,35 +4,45 @@
 
     $(document).ready(function() {
         var button = $('<button>')
-            .append($('<span>Add to MusicTube</span>')
-            .addClass('yt-uix-button-content'))
             .click(add)
+            .addClass('yt-uix-button')
             .attr({
-                'id': 'playlist-add-button',
-                'class': 'yt-uix-tooltip-reverse yt-uix-button yt-uix-button-default yt-uix-tooltip',
-                'data-tooltip': 'Add to MusicTube Playlist',
-                'data-tooltip-text': 'Add to MusicTube Playlist'
-            });
+                'type': 'button',
+                'role': 'button'
+            })
+            .css({
+                'height': '24px',
+                'padding': '0 6px'
+            })
+            .append($('<span>')
+                .addClass('yt-uix-button-icon-wrapper'))
+            .append($('<span>')
+                .text('Add to MusicTube')
+                .addClass('yt-uix-button-content'))
+                .css({ 'padding': '0 6px' });
 
-        chrome.extension.sendRequest({id: id}, function() {
+        chrome.extension.sendRequest({ 'id': id }, function() {
             added = true;
             appendAddedStyle(button);
         });
 
-        $('#watch-share').after(button);
+        $('#watch7-views-info').before($('<span>')
+            .addClass('yt-uix-button-context-light')
+            .css({ 'margin-left': '10px' })
+            .append(button));
     });
 
     function appendAddedStyle(button) {
-        var bgUrl = 'http://s.ytimg.com/yt/imgbin/www-refresh-vflj8-2O7.png';
+        var bgUrl = 'http://s.ytimg.com/yts/imgbin/www-hitchhiker-vflmnaCdT.png';
         var successImg = $('<img>')
             .addClass('yt-uix-button-icon yt-uix-button-icon-subscribe')
-            .attr('src', 'http://s.ytimg.com/yt/img/pixel-vfl3z5WfW.gif')
+            .attr('src', 'http://s.ytimg.com/yts/img/pixel-vfl3z5WfW.gif')
             .css({
-                background: 'no-repeat url("' + bgUrl + '") -109px 0',
-                height: '16px',
-                width: '16px'
+                'background': 'no-repeat url("' + bgUrl + '") -237px -148px',
+                'height': '11px',
+                'width': '9px'
             });
-        button.prepend(successImg);
+        button.find('.yt-uix-button-icon-wrapper').append(successImg);
     }
 
     function add(event) {
