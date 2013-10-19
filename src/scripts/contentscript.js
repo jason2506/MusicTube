@@ -6,6 +6,7 @@
         var button = $('<button>')
             .click(add)
             .addClass('yt-uix-button')
+            .addClass('yt-uix-button-subscribe-branded')
             .attr({
                 'type': 'button',
                 'role': 'button'
@@ -33,15 +34,14 @@
     });
 
     function appendAddedStyle(button) {
+        button
+            .removeClass('yt-uix-button-subscribe-branded')
+            .addClass('yt-uix-button-subscribed-branded');
+
         var bgUrl = 'http://s.ytimg.com/yts/imgbin/www-hitchhiker-vflmnaCdT.png';
         var successImg = $('<img>')
             .addClass('yt-uix-button-icon yt-uix-button-icon-subscribe')
-            .attr('src', 'http://s.ytimg.com/yts/img/pixel-vfl3z5WfW.gif')
-            .css({
-                'background': 'no-repeat url("' + bgUrl + '") -237px -148px',
-                'height': '11px',
-                'width': '9px'
-            });
+            .attr('src', 'http://s.ytimg.com/yts/img/pixel-vfl3z5WfW.gif');
         button.find('.yt-uix-button-icon-wrapper').append(successImg);
     }
 
