@@ -1,108 +1,110 @@
 (function() {
-    var bgPage = chrome.extension.getBackgroundPage();
-    var player = bgPage.player;
-    var componments = {
-        sidebarItems:       $('#sidebar li'),
 
-        playmodeSelectors:  $('input[name=playmode]:radio'),
+var bgPage = chrome.extension.getBackgroundPage();
+var player = bgPage.player;
+var componments = {
+    sidebarItems:       $('#sidebar li'),
 
-        importResultMsg:    $('#import-export-page .msg'),
-        importTextarea:     $('#import'),
-        importButton:       $('#submit-import'),
-        exportTextarea:     $('#export'),
-        exportButton:       $('#refresh-export')
-    };
+    playmodeSelectors:  $('input[name=playmode]:radio'),
 
-    /*
-     * Sidebar Control
-     */
-    componments.sidebarItems.click(function() {
-        $('.current').removeClass('current');
+    importResultMsg:    $('#import-export-page .msg'),
+    importTextarea:     $('#import'),
+    importButton:       $('#submit-import'),
+    exportTextarea:     $('#export'),
+    exportButton:       $('#refresh-export')
+};
 
-        var targetId = $(this).attr('rel');
-        $(this).addClass('current');
-        $('#' + targetId).addClass('current');
-    });
+/*
+ * Sidebar Control
+ */
+componments.sidebarItems.click(function() {
+    $('.current').removeClass('current');
 
-    $(componments.sidebarItems[0]).click();
+    var targetId = $(this).attr('rel');
+    $(this).addClass('current');
+    $('#' + targetId).addClass('current');
+});
 
-    /*
-     * Player Options
-     */
-    componments.playmodeSelectors.each(function() {
-        var mode = player.playmode();
-        if ($(this).val() === mode)
-            $(this).attr('checked', 'true');
-    });
+$(componments.sidebarItems[0]).click();
 
-    componments.playmodeSelectors.click(function() {
-        var mode = $(this).val();
-        player.playmode(mode);
-    });
+/*
+ * Player Options
+ */
+componments.playmodeSelectors.each(function() {
+    var mode = player.playmode();
+    if ($(this).val() === mode)
+        $(this).attr('checked', 'true');
+});
 
-    /*
-     * Export / Import
-     */
-    exportPlaylist();
-    componments.importButton.click(importPlaylist);
-    componments.exportButton.click(exportPlaylist);
+componments.playmodeSelectors.click(function() {
+    var mode = $(this).val();
+    player.playmode(mode);
+});
 
-    function importPlaylist() {
-        var msg = componments.importResultMsg;
-        msg.removeClass('success error');
+/*
+ * Export / Import
+ */
+exportPlaylist();
+componments.importButton.click(importPlaylist);
+componments.exportButton.click(exportPlaylist);
 
-        var json = componments.importTextarea.val();
-        var result;
-        try {
-            result = JSON.parse(json);
-        }
-        catch (error) {
+function importPlaylist() {
+    var msg = componments.importResultMsg;
+    msg.removeClass('success error');
+
+    var json = componments.importTextarea.val();
+    var result;
+    try {
+        result = JSON.parse(json);
+    }
+    catch (error) {
+        msg.addClass('error')
+            .text('The imported text is not a valid JSON string.');
+        return;
+    }
+
+    if (!$.isArray(result)) {
+        msg.addClass('error')
+            .text('The imported object is not a array of video id-title pair.');
+        return;
+    }
+
+    const idPattern = /^[a-zA-Z0-9\-_]{11}$/;
+    var playlist = [];
+    for (var index = 0; index < result.length; index++)
+    {
+        var id = result[index].id;
+        var title = result[index].title;
+
+        if (typeof id !== 'string') {
             msg.addClass('error')
-                .text('The imported text is not a valid JSON string.');
+                .text('The video id "' + id + '" is not a string.');
+            return;
+        }
+        else if (!idPattern.test(id)) {
+            msg.addClass('error')
+                .text('"' + id + '" is not a valid video id.');
+            return;
+        }
+        else if (typeof title !== 'string' || title.length === 0) {
+            msg.addClass('error')
+                .text('The video title is not valid.');
             return;
         }
 
-        if (!$.isArray(result)) {
-            msg.addClass('error')
-                .text('The imported object is not a array of video id-title pair.');
-            return;
-        }
-
-        const idPattern = /^[a-zA-Z0-9\-_]{11}$/;
-        var playlist = [];
-        for (var index = 0; index < result.length; index++)
-        {
-            var id = result[index].id;
-            var title = result[index].title;
-
-            if (typeof id !== 'string') {
-                msg.addClass('error')
-                    .text('The video id "' + id + '" is not a string.');
-                return;
-            }
-            else if (!idPattern.test(id)) {
-                msg.addClass('error')
-                    .text('"' + id + '" is not a valid video id.');
-                return;
-            }
-            else if (typeof title !== 'string' || title.length === 0) {
-                msg.addClass('error')
-                    .text('The video title is not valid.');
-                return;
-            }
-
-            playlist.push({
-                id: result[index].id,
-                title: result[index].title
-            });
-        }
-
-        player.import(playlist);
-        msg.addClass('success').text('Import successful.');
+        playlist.push({
+            id: result[index].id,
+            title: result[index].title
+        });
     }
 
-    function exportPlaylist() {
-        var json = JSON.stringify(player.playlist);
-        componments.exportTextarea.val(json);
-    }
+    player.import(playlist);
+    msg.addClass('success').text('Import successful.');
+}
+
+function exportPlaylist() {
+    var json = JSON.stringify(player.playlist);
+    componments.exportTextarea.val(json);
+}
+
 })();
