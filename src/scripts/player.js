@@ -10,7 +10,7 @@ var player = new (function(player) {
     var isPlayed = new Array(this.playlist.length);
     resetPlayedRecord();
 
-    player.on('readyToPlay', function(event) {
+    player.on('readyToPlay', this, function(event) {
         this.play();
     });
 
@@ -40,7 +40,7 @@ var player = new (function(player) {
             currentPlaying = index;
             var videoId = this.playlist[index].id;
             $.ajax({
-                url: 'http://www.youtube.com/watch?v=' + videoId,
+                url: 'https://www.youtube.com/watch?v=' + videoId,
                 success: function(data) {
                     var url = fetchVideoUrl(data);
                     player.attr('src', url);
@@ -76,7 +76,7 @@ var player = new (function(player) {
     };
 
     this.bufferedTime = function() {
-        if (player.attr('src').length === 0 && player[0].buffered.length === 0)
+        if (player.attr('src').length === 0 || player[0].buffered.length === 0)
             return 0;
         return player[0].buffered.end(0);
     };
@@ -232,7 +232,6 @@ var player = new (function(player) {
         var streamMapMatch = fmtStreamMapPattern.exec(content);
         var streamMap = streamMapMatch[1].replace(/\\u0026/g, '&');
         var match = fmtUrlParrern.exec(streamMap);
-        console.log(match);
         var url = urlParrern.exec(match[0])[1];
         var sig = sigParrern.exec(match[0])[1];
         return unescape(url + '&signature=' + sig);
