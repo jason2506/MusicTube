@@ -229,12 +229,13 @@ function fetchVideoUrl(content) {
     const fmtStreamMapPattern = /"url_encoded_fmt_stream_map": "([^"]+)"/;
     const fmtUrlParrern = /[^,]*itag=43[^,]*/;
     const urlParrern = /url=([^&,]+)/;
-    const sigParrern = /sig=([^&,]+)/;
+    const sigParrern = /s=([^&,]+)/;
     var streamMapMatch = fmtStreamMapPattern.exec(content);
     var streamMap = streamMapMatch[1].replace(/\\u0026/g, '&');
     var match = fmtUrlParrern.exec(streamMap);
     var url = urlParrern.exec(match[0])[1];
     var sig = sigParrern.exec(match[0])[1];
+    sig = sig.slice(5, 56) + sig[3] + sig.slice(57);
     return unescape(url + '&signature=' + sig);
 }
 
