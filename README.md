@@ -17,8 +17,10 @@
 
 ## License
 
-This extension is [BSD-licensed](http://www.opensource.org/licenses/BSD-3-Clause). You can see the LICENSE file get more detail.
+Copyright (c) 2011-2014, Chi-En Wu
 
-The extension icon is designed by [Everaldo Coelho](http://www.everaldo.com/). It is released under [GNU Lesser General Public License](http://www.gnu.org/licenses/lgpl.html).
+Distributed under [The BSD 3-Clause License](http://opensource.org/licenses/BSD-3-Clause).
 
-The icon set I used for the music player components is designed by [Gentleface.com](http://www.gentleface.com/). All of those are released under [CC License Attribution-Noncommercial 3.0](http://creativecommons.org/licenses/by-nc/3.0/).
+The extension icon is designed by [Everaldo Coelho](http://www.everaldo.com/) and released under [GNU Lesser General Public License](http://www.gnu.org/licenses/lgpl.html).
+
+The icon set used for the music player components is designed by [Gentleface.com](http://www.gentleface.com/). All of those are released under [CC License Attribution-Noncommercial 3.0](http://creativecommons.org/licenses/by-nc/3.0/).
