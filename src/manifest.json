@@ -1,6 +1,6 @@
 {
     "name": "MusicTube",
-    "version": "1.1.8",
+    "version": "1.1.9",
     "manifest_version": 2,
     "description": "Plays YouTube music in your web browser.",
     "update_url": "https://raw.github.com/jason2506/MusicTube/master/updates.xml",
@@ -17,12 +17,12 @@
         "default_popup": "popup.html"
     },
     "content_scripts": [{
-        "matches": ["*://www.youtube.com/watch*"],
+        "matches": ["*://www.youtube.com/*"],
         "js": ["scripts/jquery.js", "scripts/contentscript.js"]
     }],
     "options_page": "options.html",
     "permissions": [
-        "*://www.youtube.com/watch"
+        "*://www.youtube.com/*"
     ]
 }
 

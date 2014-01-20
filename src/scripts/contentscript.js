@@ -1,11 +1,24 @@
 (function() {
 
-var id = window.location.search.split('v=')[1].split('&')[0];
-var added = false;
+const pageUrlPattern = /^http(s?):\/\/www\.youtube\.com\/watch/;
 
-$(document).ready(function() {
+function main() {
+    if (!pageUrlPattern.test(window.location.href)) {
+        return;
+    }
+
+    var added = false;
+    var id = window.location.search.split('v=')[1].split('&')[0];
     var button = $('<button>')
-        .click(add)
+        .click(function (event) {
+            var title = $('#eow-title').attr('title');
+            chrome.extension.sendRequest({id: id, title: title});
+
+            if (!added) {
+                added = true;
+                appendAddedStyle($(this));
+            }
+        })
         .addClass('yt-uix-button')
         .addClass('yt-uix-button-subscribe-branded')
         .attr({
@@ -29,10 +42,11 @@ $(document).ready(function() {
     });
 
     $('#watch7-views-info').before($('<span>')
+        .attr({ 'id': 'watch7-addmusic-container' })
         .addClass('yt-uix-button-context-light')
         .css({ 'margin-left': '10px' })
         .append(button));
-});
+}
 
 function appendAddedStyle(button) {
     button
@@ -46,15 +60,17 @@ function appendAddedStyle(button) {
     button.find('.yt-uix-button-icon-wrapper').append(successImg);
 }
 
-function add(event) {
-    var title = $('meta[name="title"]').attr('content');
-    chrome.extension.sendRequest({id: id, title: title});
+$(document).ready(function() {
+    setInterval(function() {
+        var container = document.getElementById('watch7-addmusic-container');
+        var containerBefore = document.getElementById('watch7-views-info');
+        if (containerBefore !== null && container === null) {
+            main();
+        }
+    }, 500);
 
-    if (!added) {
-        added = true;
-        appendAddedStyle($(this));
-    }
-}
+    main();
+});
 
 })();
 
