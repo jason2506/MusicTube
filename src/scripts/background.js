@@ -1,6 +1,9 @@
+var player = createPlayer(document.getElementById('player'));
 chrome.extension.onRequest.addListener(function(request, sender, callback) {
-    if (typeof request.title !== 'undefined')
+    if (typeof request.title !== 'undefined') {
         player.add(request.id, request.title);
-    else if (player.contains(request.id))
+    }
+    else if (player.contains(request.id)) {
         callback();
+    }
 });
