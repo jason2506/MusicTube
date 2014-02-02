@@ -198,6 +198,8 @@ var createPlayer = function(playerElem) {
     };
 
     player.add = function(id, title) {
+        if (player.contains(id)) { return; }
+
         playedList.push(false);
         player.playlist.push({id: id, title: title});
         localStorage.playlist = JSON.stringify(player.playlist);
