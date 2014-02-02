@@ -18,7 +18,7 @@
     },
     "content_scripts": [{
         "matches": ["*://www.youtube.com/*"],
-        "js": ["scripts/jquery.js", "scripts/contentscript.js"]
+        "js": ["scripts/contentscript.js"]
     }],
     "options_page": "options.html",
     "permissions": [
