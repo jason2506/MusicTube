@@ -1,76 +1,72 @@
-(function() {
+const PAGE_URL_PTN = /^http(s?):\/\/www\.youtube\.com\/watch/;
 
-const pageUrlPattern = /^http(s?):\/\/www\.youtube\.com\/watch/;
+var added = false;
 
-function main() {
-    if (!pageUrlPattern.test(window.location.href)) {
+function appendAddedStyle(button) {
+    var successImg = document.createElement('img'),
+        successImgUrl = 'http://s.ytimg.com/yts/img/pixel-vfl3z5WfW.gif';
+
+    successImg.classList.add('yt-uix-button-icon');
+    successImg.classList.add('yt-uix-button-icon-subscribe');
+    successImg.setAttribute('src', successImgUrl);
+
+    button.classList.remove('yt-uix-button-subscribe-branded');
+    button.classList.add('yt-uix-button-subscribed-branded');
+    button.querySelector('.yt-uix-button-icon-wrapper').appendChild(successImg);
+
+    added = true;
+}
+
+function createButton() {
+    var button = document.createElement('button'),
+        container = document.createElement('span');
+
+    button.classList.add('yt-uix-button');
+    button.classList.add('yt-uix-button-subscribe-branded');
+    button.setAttribute('type', 'button');
+    button.setAttribute('rule', 'button');
+    button.setAttribute('style', 'height: 24px; padding: 0 6px');
+    button.addEventListener('click', function() {
+        var id = window.location.search.split('v=')[1].split('&')[0],
+            title = document.getElementById('eow-title').getAttribute('title');
+        chrome.extension.sendRequest({ id: id, title: title });
+        if (!added) { appendAddedStyle(this); }
+    });
+
+    button.innerHTML =
+        '<span class="yt-uix-button-icon-wrapper"></span>' +
+        '<span class="yt-uix-button-content">Add to MusicTube</span>';
+
+    container.id = 'watch7-addmusic-container';
+    container.classList.add('yt-uix-button-context-light');
+    container.setAttribute('style', 'margin-left: 10px');
+    container.appendChild(button);
+    return container;
+}
+
+function ready() {
+    if (!PAGE_URL_PTN.test(window.location.href)) {
         return;
     }
 
-    var added = false;
-    var id = window.location.search.split('v=')[1].split('&')[0];
-    var button = $('<button>')
-        .click(function (event) {
-            var title = $('#eow-title').attr('title');
-            chrome.extension.sendRequest({id: id, title: title});
+    var id = window.location.search.split('v=')[1].split('&')[0],
+        button = createButton(),
+        buttonBefore = document.getElementById('watch7-views-info');
 
-            if (!added) {
-                added = true;
-                appendAddedStyle($(this));
-            }
-        })
-        .addClass('yt-uix-button')
-        .addClass('yt-uix-button-subscribe-branded')
-        .attr({
-            'type': 'button',
-            'role': 'button'
-        })
-        .css({
-            'height': '24px',
-            'padding': '0 6px'
-        })
-        .append($('<span>')
-            .addClass('yt-uix-button-icon-wrapper'))
-        .append($('<span>')
-            .text('Add to MusicTube')
-            .addClass('yt-uix-button-content'))
-            .css({ 'padding': '0 6px' });
-
-    chrome.extension.sendRequest({ 'id': id }, function() {
-        added = true;
-        appendAddedStyle(button);
+    added = false;
+    chrome.extension.sendRequest({ id: id }, function() {
+        appendAddedStyle(button.childNodes[0]);
     });
 
-    $('#watch7-views-info').before($('<span>')
-        .attr({ 'id': 'watch7-addmusic-container' })
-        .addClass('yt-uix-button-context-light')
-        .css({ 'margin-left': '10px' })
-        .append(button));
+    buttonBefore.parentNode.insertBefore(button, buttonBefore);
 }
 
-function appendAddedStyle(button) {
-    button
-        .removeClass('yt-uix-button-subscribe-branded')
-        .addClass('yt-uix-button-subscribed-branded');
+setInterval(function() {
+    var container = document.getElementById('watch7-addmusic-container'),
+        containerBefore = document.getElementById('watch7-views-info');
+    if (containerBefore !== null && container === null) {
+        ready();
+    }
+}, 500);
 
-    var bgUrl = 'http://s.ytimg.com/yts/imgbin/www-hitchhiker-vflmnaCdT.png';
-    var successImg = $('<img>')
-        .addClass('yt-uix-button-icon yt-uix-button-icon-subscribe')
-        .attr('src', 'http://s.ytimg.com/yts/img/pixel-vfl3z5WfW.gif');
-    button.find('.yt-uix-button-icon-wrapper').append(successImg);
-}
-
-$(document).ready(function() {
-    setInterval(function() {
-        var container = document.getElementById('watch7-addmusic-container');
-        var containerBefore = document.getElementById('watch7-views-info');
-        if (containerBefore !== null && container === null) {
-            main();
-        }
-    }, 500);
-
-    main();
-});
-
-})();
-
+ready();

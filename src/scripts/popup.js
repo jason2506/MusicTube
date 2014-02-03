@@ -1,205 +1,208 @@
 (function() {
+    var forEach     = Array.prototype.forEach,
+        bgPage      = chrome.extension.getBackgroundPage(),
+        player      = bgPage.player,
+        progress    = document.getElementById('progress'),
+        mute        = document.getElementById('mute'),
+        volume      = document.getElementById('volume-range'),
+        time        = document.getElementById('time'),
+        toggle      = document.getElementById('toggle'),
+        playlist    = document.getElementById('playlist');
 
-var bgPage = chrome.extension.getBackgroundPage();
-var player = bgPage.player;
-var components = {
-    progress:   $('#progress'),
-    mute:       $('#mute'),
-    volume:     $('#volume-range'),
-    time:       $('#time'),
-    toggle:     $('#toggle'),
-    playlist:   $('#playlist')
-};
-
-displayPlaylist();
-startListenEvent();
-startUpdate();
-
-function displayPlaylist () {
-    var playlist = player.playlist;
-    for (var index = 0; index < playlist.length; index++) {
-        appendPlaylistItem(index + 1, playlist[index].title);
+    function addEventListener(targets, eventName, callback) {
+        forEach.call(targets, function(target) {
+            target.addEventListener(eventName, callback);
+        });
     }
 
-    components.playlist.sortable({
-        stop: function(event, ui) {
-            var from = $(ui.item).attr('index') - 1;
-            var to = $(ui.item).index();
-            var step = from > to ? -1 : 1;
-
-            var items = components.playlist.children();
-            for (var index = from; index !== to; index += step) {
-                $(items[index]).attr('index', index + 1);
-            }
-
-            $(ui.item).attr('index', to + 1);
-            player.move(from, to);
+    function displayPlaylist() {
+        var indexOf = Array.prototype.indexOf,
+            length = player.playlist.length,
+            index = 0;
+        for ( ; index < length; index++) {
+            appendPlaylistItem(index + 1, player.playlist[index].title);
         }
-    });
-}
 
-function appendPlaylistItem(index, title) {
-    var item = $('<li>').attr('index', index);
+        new Sortable(playlist, {
+            onUpdate: function(event) {
+                var items = playlist.childNodes,
+                    from = event.item.getAttribute('index') - 1,
+                    to = indexOf.call(items, event.item),
+                    step = from > to ? -1 : 1,
+                    index = from;
+                for ( ; index !== to; index += step) {
+                    items[index].setAttribute('index', index + 1);
+                }
 
-    var itemTitle = $('<span>').text(title)
-        .addClass('title');
-    item.append(itemTitle);
-
-    var removeButton = $('<img>').attr('src', 'icons/remove.png')
-        .addClass('remove');
-    item.append(removeButton);
-
-    components.playlist.append(item);
-}
-
-function removePlaylistItem(index) {
-    var items = components.playlist.children();
-    $(items[index]).remove();
-    for ( ; index <= player.playlist.length; index++) {
-        $(items[index]).attr('index', index);
+                event.item.setAttribute('index', to + 1);
+                player.move(from, to);
+            }
+        });
     }
-}
 
-function startListenEvent() {
-    components.progress.click(function(event) {
-        var percent = (event.pageX - $(this).offset().left) / $(this).width();
-        player.seek(percent);
-    });
+    function appendPlaylistItem(index, title) {
+        var item = document.createElement('li');
+        item.setAttribute('index', index);
+        item.innerHTML = '<span class="title">' + title + '</span>' +
+            '<img src="icons/remove.png" class="remove">';
 
-    components.toggle.click(function(event) {
-        player.toggle();
-    });
+        playlist.appendChild(item);
+    }
 
-    components.mute.click(function(event) {
-        player.toggleMute();
-        updateVolume();
-        updateMute();
-    });
+    function removePlaylistItem(index) {
+        var items = playlist.childNodes,
+            length = player.playlist.length;
+        items[index].parentNode.removeChild(items[index]);
+        for ( ; index <= length; index++) {
+            items[index - 1].setAttribute('index', index);
+        }
+    }
 
-    components.volume.change(function(event) {
-        var volume = $(this).val();
-        player.volume(volume);
-        if (volume > 0)
-            player.muted(false);
-        updateMute();
-    });
+    function startListenEvent() {
+        var items = playlist.getElementsByTagName('li'),
+            titles = playlist.getElementsByClassName('title'),
+            removes = playlist.getElementsByClassName('remove');
 
-    $('li', components.playlist).dblclick(function() {
-        var index = $(this).attr('index') - 1;
-        player.play(index);
-    });
-
-    $('.title', components.playlist)
-        .dblclick(function(event) {
-            event.stopPropagation();
-        })
-        .mousedown(function() {
-            components.playlist.sortable('disable');
-            $(this).addClass('edit');
-            $(this).attr('contentEditable', 'true');
-        })
-        .keypress(function(event) {
-            if (event.keyCode === 13)
-                this.blur();
-        })
-        .blur(function() {
-            components.playlist.sortable('enable');
-            $(this).removeClass('edit');
-            $(this).attr('contentEditable', 'false');
-            $(this).scrollLeft(0);
-
-            var index = $(this).parent().attr('index') - 1;
-            var title = $(this).text();
-
-            player.changeTitle(index, title);
-            $(this).text(player.playlist[index].title);
+        progress.addEventListener('click', function(event) {
+            var percent = (event.pageX - this.offsetLeft) / this.offsetWidth;
+            player.seek(percent);
         });
 
-    $('.remove', components.playlist).click(function() {
-        var index = $(this).parent().attr('index') - 1;
-        player.remove(index);
-        removePlaylistItem(index);
-    });
-}
+        toggle.addEventListener('click', player.toggle);
 
-function startUpdate() {
-    function update() {
-        updateProgress();
-        updateToggleButton();
-        updateTime();
-        updatePlaylist();
+        mute.addEventListener('click', function() {
+            player.toggleMute();
+            updateVolume();
+            updateMute();
+        });
+
+        volume.addEventListener('change', function() {
+            var volume = this.value;
+            player.volume(volume);
+            if (volume > 0) {
+                player.muted(false);
+            }
+
+            updateMute();
+        });
+
+        addEventListener(items, 'dblclick', function() {
+            console.log('hello');
+            var index = this.getAttribute('index') - 1;
+            player.play(index);
+        });
+
+        addEventListener(titles, 'dblclick', function(event) {
+            event.stopPropagation();
+        });
+
+        addEventListener(titles, 'mousedown', function() {
+            this.classList.add('edit');
+            this.setAttribute('contentEditable', 'true');
+        });
+
+        addEventListener(titles, 'keypress', function(event) {
+            if (event.keyCode === 13) {
+                this.blur();
+            }
+        });
+
+        addEventListener(titles, 'blur', function() {
+            var index = this.parentNode.getAttribute('index') - 1,
+                title = this.textContent;
+
+            this.classList.remove('edit');
+            this.setAttribute('contentEditable', 'false');
+            this.scrollLeft = 0;
+
+            player.changeTitle(index, title);
+            this.textContent = player.playlist[index].title;
+        });
+
+        addEventListener(removes, 'click', function() {
+            var index = this.parentNode.getAttribute('index') - 1;
+            player.remove(index);
+            removePlaylistItem(index);
+        });
     }
 
-    updateVolume();
-    updateMute();
-    update();
-    setInterval(update, 500);
-}
+    function startUpdate() {
+        function update() {
+            updateProgress();
+            updateToggleButton();
+            updateTime();
+            updatePlaylist();
+        }
 
-function updateVolume() {
-    var volume = player.muted() ? 0 : player.volume();
-    components.volume.val(volume);
-}
-
-function updateMute() {
-    var muted = player.muted() || (player.volume() === 0);
-    var url = 'icons/' + (muted ? 'mute' : 'volume') + '.png';
-    components.mute.attr('src', url);
-}
-
-function updateProgress() {
-    var width = 300;
-    var height = components.progress.height() * 50;
-
-    var currentTime = player.currentTime();
-    var bufferedTime = player.bufferedTime();
-    var duration = player.duration();
-
-    var ctx = components.progress[0].getContext("2d");
-    ctx.clearRect(0, 0, width, height);
-
-    ctx.fillStyle = "#999";
-    ctx.fillRect(0, 0, width * bufferedTime / duration, height);
-    ctx.fillStyle = "#49F";
-    ctx.fillRect(0, 0, width * currentTime / duration, height);
-}
-
-function updateToggleButton() {
-    var url = 'icons/' + (player.paused() ? 'play' : 'pause') + '.png';
-    components.toggle.attr('src', url);
-}
-
-function updateTime() {
-    var currentTime = player.currentTime();
-    var duration = player.duration() || 0;
-    var text = timeToText(currentTime) + ' / ' + timeToText(duration);
-    components.time.text(text);
-}
-
-function timeToText(seconds) {
-    var minutes;
-    minutes = Math.floor(seconds / 60);
-    seconds = Math.floor(seconds % 60);
-
-    var text = '';
-    if (minutes < 10) { text += '0'; }
-    text += minutes + ':';
-    if (seconds < 10) { text += '0'; }
-    text += seconds;
-    return text;
-}
-
-function updatePlaylist() {
-    var items = components.playlist.children();
-    var currentIndex = player.currentIndex() + 1;
-    for (var index = 0; index < items.length; index++)
-    {
-        if (parseInt($(items[index]).attr('index'), 10) === currentIndex)
-            $(items[index]).addClass('current');
-        else
-            $(items[index]).removeClass('current');
+        updateVolume();
+        updateMute();
+        update();
+        setInterval(update, 500);
     }
-}
 
+    function updateVolume() {
+        var volume = player.muted() ? 0 : player.volume();
+        volume.value = volume;
+    }
+
+    function updateMute() {
+        var muted = player.muted() || (player.volume() === 0),
+            url = 'icons/' + (muted ? 'mute' : 'volume') + '.png';
+        mute.setAttribute('src', url);
+    }
+
+    function updateProgress() {
+        var width = 300,
+            height = progress.offsetHeight * 50,
+            currentTime = player.currentTime(),
+            bufferedTime = player.bufferedTime(),
+            duration = player.duration(),
+            ctx = progress.getContext('2d');
+
+        ctx.clearRect(0, 0, width, height);
+
+        ctx.fillStyle = '#999';
+        ctx.fillRect(0, 0, width * bufferedTime / duration, height);
+        ctx.fillStyle = '#49F';
+        ctx.fillRect(0, 0, width * currentTime / duration, height);
+    }
+
+    function updateToggleButton() {
+        var url = 'icons/' + (player.paused() ? 'play' : 'pause') + '.png';
+        toggle.setAttribute('src', url);
+    }
+
+    function updateTime() {
+        var currentTime = player.currentTime(),
+            duration = player.duration() || 0,
+            text = timeToText(currentTime) + ' / ' + timeToText(duration);
+        time.textContent = text;
+    }
+
+    function timeToText(seconds) {
+        var minutes, text = '';
+        minutes = Math.floor(seconds / 60);
+        seconds = Math.floor(seconds % 60);
+        if (minutes < 10) { text += '0'; }
+        text += minutes + ':';
+        if (seconds < 10) { text += '0'; }
+        text += seconds;
+        return text;
+    }
+
+    function updatePlaylist() {
+        var currentIndex = player.currentIndex() + 1;
+        forEach.call(playlist.childNodes, function(item) {
+            if (parseInt(item.getAttribute('index'), 10) === currentIndex) {
+                item.classList.add('current');
+            }
+            else {
+                item.classList.remove('current');
+            }
+        });
+    }
+
+    displayPlaylist();
+    startListenEvent();
+    startUpdate();
 })();
-

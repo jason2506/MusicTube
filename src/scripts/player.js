@@ -1,243 +1,297 @@
-var player = new (function(player) {
+var createPlayer = function(playerElem) {
+    const FMT_STREAM_MAP_PTN = /"url_encoded_fmt_stream_map": "([^"]+)"/;
+    const INFO_PTN = /[^,]*itag=43[^,]*/;
+    const URL_PTN = /url=([^&,]+)/;
+    const ENCODED_SIG_PTN = /s=([^&,]+)/;
+    const SIG_PTN = /sig=([^&,]+)/;
 
-var currentPlaying = -1;
+    var player = {},
+        currentPlaying = -1,
+        playedCount = 0,
+        playedList;
 
-if (typeof localStorage.playlist === 'undefined' ||
-    localStorage.playlist === null)
-    localStorage.playlist = '[]';
-this.playlist = JSON.parse(localStorage.playlist);
+    function resetPlayedRecord() {
+        var index = 0,
+            length = playedList.length;
 
-var playedNumber = 0;
-var isPlayed = new Array(this.playlist.length);
-resetPlayedRecord();
-
-player.on('readyToPlay', this, function(event) {
-    this.play();
-});
-
-player.on('ended', this, function(event) {
-    var that = event.data;
-    var mode = that.playmode();
-    var next = nextIndex(mode, that.playlist.length);
-    if (next >= 0)
-        that.play(next);
-    else
-        player.attr('src', '');
-});
-
-this.play = function(index) {
-    if (typeof index === 'undefined' || isNaN(index)) {
-        if (player.attr('src').length > 0)
-            player.trigger('readyToPlay');
-        else if (this.playlist.length > 0)
-            player.trigger('ended');
+        playedCount = 0;
+        for ( ; index < length; index++) {
+            playedList[index] = false;
+        }
     }
-    else {
-        if (!isPlayed[index]) {
-            isPlayed[index] = true;
-            playedNumber++;
+
+    function trigger(target, eventName) {
+        var event = new CustomEvent(eventName);
+        target.dispatchEvent(event);
+    }
+
+    function nextIndex(mode, length) {
+        var selected;
+        if (length === 0) { return -1; }
+
+        switch (mode) {
+            case 'repeat':
+                return (currentPlaying + 1) % length;
+
+            case 'repeat-one':
+                return currentPlaying;
+
+            case 'shuffle':
+                if (playedCount === length) {
+                    resetPlayedRecord();
+                }
+
+                do {
+                    selected = Math.floor(Math.random() * length);
+                } while(playedList[selected]);
+
+                return selected;
+
+            default:
+                return -1;
+        }
+    }
+
+    function decodeSig(s) {
+        s = s[22] + s.slice(4, 22) + s[3] + s.slice(23, 38) + s[0] +
+            s.slice(39, 65) + s[83] + s.slice(66, 83) + s[65];
+        return s.split('').reverse().join('');
+    }
+
+    function fetchVideoUrl(content) {
+        var streamMapMatch = FMT_STREAM_MAP_PTN.exec(content),
+            streamMap = streamMapMatch[1].replace(/\\u0026/g, '&'),
+            info = INFO_PTN.exec(streamMap)[0],
+            url = URL_PTN.exec(info)[1],
+            sigMatch;
+
+        url = decodeURIComponent(url);
+        if ((sigMatch = SIG_PTN.exec(info)) !== null) {
+            url += '&signature=' + sigMatch[1];
+        }
+        else if ((sigMatch = ENCODED_SIG_PTN.exec(info)) !== null) {
+            url += '&signature=' + decodeSig(sigMatch[1]);
         }
 
-        currentPlaying = index;
-        var videoId = this.playlist[index].id;
-        $.ajax({
-            url: 'https://www.youtube.com/watch?v=' + videoId,
-            success: function(data) {
-                var url = fetchVideoUrl(data);
-                player.attr('src', url);
-                player.trigger('readyToPlay');
+        return url;
+    }
+
+    player.play = function(index) {
+        var videoSrc,
+            videoId,
+            request;
+        if (typeof index === 'undefined' || isNaN(index)) {
+            videoSrc = playerElem.getAttribute('src');
+            if (videoSrc.length) {
+                trigger(playerElem, 'readyToPlay');
             }
-        });
-    }
-};
-
-this.paused = function() {
-    return player[0].paused;
-};
-
-this.pause = function() {
-    player[0].pause();
-};
-
-this.toggle = function() {
-    if (player[0].paused)
-        this.play();
-    else
-        this.pause();
-};
-
-this.seek = function(percent) {
-    player[0].currentTime = player[0].duration * percent;
-};
-
-this.duration = function() {
-    if (player.attr('src').length === 0)
-        return 0;
-    return player[0].duration;
-};
-
-this.bufferedTime = function() {
-    if (player.attr('src').length === 0 || player[0].buffered.length === 0)
-        return 0;
-    return player[0].buffered.end(0);
-};
-
-this.currentTime = function(seconds) {
-    if (player.attr('src').length === 0)
-        return 0;
-    else if (typeof seconds === 'undefined' || isNaN(seconds))
-        return player[0].currentTime;
-    else
-        player[0].currentTime = seconds;
-};
-
-this.volume = function(volume) {
-    if (typeof volume === 'undefined' || isNaN(volume))
-        return player[0].volume;
-    else
-        player[0].volume = volume;
-};
-
-this.toggleMute = function() {
-    player[0].muted = !player[0].muted;
-};
-
-this.muted = function(mute) {
-    if (typeof mute === 'undefined' || isNaN(mute))
-        return player[0].muted;
-    else
-        player[0].muted = mute;
-};
-
-this.playmode = function(mode) {
-    if (typeof mode === 'undefined' || mode === null)
-        return localStorage.playmode || 'repeat';
-    else {
-        localStorage.playmode = mode;
-        if (mode === 'shuffle')
-            resetPlayedRecord();
-    }
-};
-
-this.import = function(playlist) {
-    this.playlist = playlist;
-    localStorage.playlist = JSON.stringify(this.playlist);
-};
-
-this.add = function(id, title) {
-    isPlayed.push(false);
-
-    this.playlist.push({id: id, title: title});
-    localStorage.playlist = JSON.stringify(this.playlist);
-};
-
-this.remove = function(index) {
-    index = parseInt(index, 10);
-    isPlayed.splice(index, 1);
-
-    this.playlist.splice(index, 1);
-    localStorage.playlist = JSON.stringify(this.playlist);
-
-    if (currentPlaying > index) {
-        currentPlaying--;
-    }
-    else if (currentPlaying === index) {
-        currentPlaying = -1;
-        player.attr('src', '');
-
-        if (!player[0].paused) {
-            player[0].pause();
-            player.trigger('ended');
+            else if (player.playlist.length) {
+                trigger(playerElem, 'ended');
+            }
         }
-    }
-};
+        else {
+            if (!playedList[index]) {
+                playedList[index] = true;
+                playedCount++;
+            }
 
-this.contains = function(id) {
-    for (index = 0; index < this.playlist.length; index++)
-        if (this.playlist[index].id === id)
-            return true;
+            currentPlaying = index;
+            videoId = player.playlist[index].id;
 
-    return false;
-};
+            request = new XMLHttpRequest();
+            request.onload = function() {
+                var url = fetchVideoUrl(this.response);
+                playerElem.setAttribute('src', url);
+                trigger(playerElem, 'readyToPlay');
+            };
 
-this.move = function(from, to) {
-    from = parseInt(from, 10);
-    to = parseInt(to, 10);
+            request.open('GET', 'https://www.youtube.com/watch?v=' + videoId, true);
+            request.send();
+        }
+    };
 
-    if (from === currentPlaying)
-        currentPlaying = to;
-    else if (from < currentPlaying && currentPlaying <= to)
-        currentPlaying--;
-    else if (to <= currentPlaying && currentPlaying < from)
-        currentPlaying++;
+    player.paused = function() {
+        return playerElem.paused;
+    };
 
-    var isTargetPlayed = isPlayed[from];
-    isPlayed.splice(from, 1);
-    isPlayed.splice(to, 0, isTargetPlayed);
+    player.pause = function() {
+        playerElem.pause();
+    };
 
-    var target = this.playlist[from];
-    this.playlist.splice(from, 1);
-    this.playlist.splice(to, 0, target);
-    localStorage.playlist = JSON.stringify(this.playlist);
-};
+    player.toggle = function() {
+        if (playerElem.paused)  { player.play(); }
+        else                    { player.pause(); }
+    };
 
-this.changeTitle = function(index, title) {
-    if (typeof title === 'string' && title.length === 0) return;
+    player.seek = function(percent) {
+        playerElem.currentTime = playerElem.duration * percent;
+    };
 
-    this.playlist[index].title = title;
-    localStorage.playlist = JSON.stringify(this.playlist);
-};
+    player.duration = function() {
+        var src = playerElem.getAttribute('src');
+        if (!src.length) {
+            return 0;
+        }
 
-this.currentIndex = function() {
-    return currentPlaying;
-};
+        return playerElem.duration;
+    };
 
-function resetPlayedRecord() {
-    playedNumber = 0;
-    for (var index = 0; index < isPlayed.length; index++) {
-        isPlayed[index] = false;
-    }
-}
+    player.bufferedTime = function() {
+        var src = playerElem.getAttribute('src');
+        if (!src.length || !playerElem.buffered.length) {
+            return 0;
+        }
 
-function nextIndex(mode, length) {
-    if (length === 0) return -1;
+        return playerElem.buffered.end(0);
+    };
 
-    switch (mode) {
-        case 'repeat':
-            return (currentPlaying + 1) % length;
+    player.currentTime = function(seconds) {
+        var src = playerElem.getAttribute('src');
+        if (src.length === 0) {
+            return 0;
+        }
+        else if (typeof seconds === 'undefined' || isNaN(seconds)) {
+            return playerElem.currentTime;
+        }
+        else {
+            playerElem.currentTime = seconds;
+        }
+    };
 
-        case 'repeat-one':
-            return currentPlaying;
+    player.volume = function(volume) {
+        if (typeof volume === 'undefined' || isNaN(volume)) {
+            return playerElem.volume;
+        }
+        else {
+            playerElem.volume = volume;
+        }
+    };
 
-        case 'shuffle':
-            if (playedNumber === length)
+    player.toggleMute = function() {
+        playerElem.muted = !playerElem.muted;
+    };
+
+    player.muted = function(mute) {
+        if (typeof mute === 'undefined' || isNaN(mute)) {
+            return playerElem.muted;
+        }
+        else {
+            playerElem.muted = mute;
+        }
+    };
+
+    player.playmode = function(mode) {
+        if (typeof mode === 'undefined' || mode === null) {
+            return localStorage.playmode || 'repeat';
+        }
+        else {
+            localStorage.playmode = mode;
+            if (mode === 'shuffle') {
                 resetPlayedRecord();
+            }
+        }
+    };
 
-            var selected;
-            do {
-                selected = Math.floor(Math.random() * length);
-            } while(isPlayed[selected]);
+    player.import = function(playlist) {
+        player.playlist = playlist;
+        localStorage.playlist = JSON.stringify(player.playlist);
+    };
 
-            return selected;
+    player.add = function(id, title) {
+        if (player.contains(id)) { return; }
 
-        default:
-            return -1;
+        playedList.push(false);
+        player.playlist.push({id: id, title: title});
+        localStorage.playlist = JSON.stringify(player.playlist);
+    };
+
+    player.remove = function(index) {
+        index = parseInt(index, 10);
+        playedList.splice(index, 1);
+
+        player.playlist.splice(index, 1);
+        localStorage.playlist = JSON.stringify(player.playlist);
+
+        if (currentPlaying > index) {
+            currentPlaying--;
+        }
+        else if (currentPlaying === index) {
+            currentPlaying = -1;
+            playerElem.setAttribute('src', '');
+            if (!playerElem.paused) {
+                playerElem.pause();
+                trigger(playerElem, 'ended');
+            }
+        }
+    };
+
+    player.contains = function(id) {
+        var index = 0,
+            length = player.playlist.length;
+        for ( ; index < length; index++) {
+            if (player.playlist[index].id === id) {
+                return true;
+            }
+        }
+
+        return false;
+    };
+
+    player.move = function(from, to) {
+        var isTargetPlayed = playedList[from],
+            target = player.playlist[from];
+
+        from = parseInt(from, 10);
+        to = parseInt(to, 10);
+
+        if (from === currentPlaying) {
+            currentPlaying = to;
+        }
+        else if (from < currentPlaying && currentPlaying <= to) {
+            currentPlaying--;
+        }
+        else if (to <= currentPlaying && currentPlaying < from) {
+            currentPlaying++;
+        }
+
+        playedList.splice(from, 1);
+        playedList.splice(to, 0, isTargetPlayed);
+
+        player.playlist.splice(from, 1);
+        player.playlist.splice(to, 0, target);
+        localStorage.playlist = JSON.stringify(player.playlist);
+    };
+
+    player.changeTitle = function(index, title) {
+        if (typeof title === 'string' && title.length === 0) { return; }
+
+        player.playlist[index].title = title;
+        localStorage.playlist = JSON.stringify(player.playlist);
+    };
+
+    player.currentIndex = function() {
+        return currentPlaying;
+    };
+
+    playerElem.addEventListener('readyToPlay', function() {
+        this.play();
+    });
+
+    playerElem.addEventListener('ended', function() {
+        var mode = player.playmode(),
+            next = nextIndex(mode, player.playlist.length);
+        if (next >= 0)  { player.play(next); }
+        else            { playerElem.setAttribute('src', ''); }
+    });
+
+    if (typeof localStorage.playlist === 'undefined' ||
+        localStorage.playlist === null) {
+        localStorage.playlist = '[]';
     }
-}
 
-function fetchVideoUrl(content) {
-    const fmtStreamMapPattern = /"url_encoded_fmt_stream_map": "([^"]+)"/;
-    const fmtUrlParrern = /[^,]*itag=43[^,]*/;
-    const urlParrern = /url=([^&,]+)/;
-    const sigParrern = /s=([^&,]+)/;
-    var streamMapMatch = fmtStreamMapPattern.exec(content);
-    var streamMap = streamMapMatch[1].replace(/\\u0026/g, '&');
-    var match = fmtUrlParrern.exec(streamMap);
-    var url = urlParrern.exec(match[0])[1];
-    var sig = sigParrern.exec(match[0])[1];
-    sig = sig.slice(5, 56) + sig[3] + sig.slice(57);
-    return unescape(url + '&signature=' + sig);
-}
+    player.playlist = JSON.parse(localStorage.playlist);
+    playedList = new Array(player.playlist.length);
+    resetPlayedRecord();
 
-})($('#player'));
-
+    return player;
+};
