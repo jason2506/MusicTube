@@ -141,8 +141,7 @@
     }
 
     function updateVolume() {
-        var volume = player.muted() ? 0 : player.volume();
-        volume.value = volume;
+        volume.value = player.muted() ? 0 : player.volume();
     }
 
     function updateMute() {

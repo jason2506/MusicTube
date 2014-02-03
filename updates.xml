@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <gupdate xmlns='http://www.google.com/update2/response' protocol='2.0'>
   <app appid='dkpajgdindimkhbgiobapbhejcabcfdd'>
-    <updatecheck codebase='https://raw.github.com/jason2506/MusicTube/master/MusicTube.crx' version='1.1.10' />
+    <updatecheck codebase='https://raw.github.com/jason2506/MusicTube/master/MusicTube.crx' version='1.1.11' />
   </app>
 </gupdate>
