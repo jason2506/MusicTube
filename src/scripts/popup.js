@@ -87,7 +87,6 @@
         });
 
         addEventListener(items, 'dblclick', function() {
-            console.log('hello');
             var index = this.getAttribute('index') - 1;
             player.play(index);
         });
