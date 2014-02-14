@@ -164,6 +164,7 @@ var createPlayer = function(playerElem) {
         }
         else {
             playerElem.volume = volume;
+            localStorage.volume = volume;
         }
     };
 
@@ -289,6 +290,7 @@ var createPlayer = function(playerElem) {
         localStorage.playlist = '[]';
     }
 
+    playerElem.volume = localStorage.volume;
     player.playlist = JSON.parse(localStorage.playlist);
     playedList = new Array(player.playlist.length);
     resetPlayedRecord();
