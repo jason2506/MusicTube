@@ -1,9 +1,9 @@
 var player = createPlayer(document.getElementById('player'));
-chrome.extension.onRequest.addListener(function(request, sender, callback) {
-    if (typeof request.title !== 'undefined') {
-        player.add(request.id, request.title);
+chrome.extension.onMessage.addListener(function(message, sender, callback) {
+    if (typeof message.title !== 'undefined') {
+        player.add(message.id, message.title);
     }
-    else if (player.contains(request.id)) {
+    else if (player.contains(message.id)) {
         callback();
     }
 });

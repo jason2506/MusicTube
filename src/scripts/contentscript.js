@@ -29,7 +29,7 @@ function createButton() {
     button.addEventListener('click', function() {
         var id = window.location.search.split('v=')[1].split('&')[0],
             title = document.getElementById('eow-title').getAttribute('title');
-        chrome.extension.sendRequest({ id: id, title: title });
+        chrome.extension.sendMessage({ id: id, title: title });
         if (!added) { appendAddedStyle(this); }
     });
 
@@ -54,7 +54,7 @@ function ready() {
         buttonBefore = document.getElementById('watch7-views-info');
 
     added = false;
-    chrome.extension.sendRequest({ id: id }, function() {
+    chrome.extension.sendMessage({ id: id }, function() {
         appendAddedStyle(button.childNodes[0]);
     });
 
