@@ -40,8 +40,7 @@
         }
 
         length = playlist.length;
-        for (index ; index < length; index++)
-        {
+        for (index ; index < length; index++) {
             id = playlist[index].id;
             title = playlist[index].title;
             if (typeof id !== 'string') {
