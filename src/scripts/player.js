@@ -53,9 +53,9 @@ var createPlayer = function(playerElem) {
     }
 
     function decodeSig(s) {
-        s = s.slice(2, 28) + s[76] + s.slice(29, 47) + s[28] +
-            s.slice(48, 66) + s[86] + s.slice(67, 76) + s[66] + s.slice(77, 83);
-        return s;
+        s = s.slice(0, 12) + s[80] + s.slice(13, 52) + s[12] +
+            s.slice(53, 80) + s[52];
+        return s.split('').reverse().join('');
     }
 
     function fetchVideoUrl(content) {
